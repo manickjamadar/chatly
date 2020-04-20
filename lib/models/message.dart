@@ -27,7 +27,8 @@ class Message {
       @required this.receiverId,
       @required this.content,
       MessageStatus messageStatus = MessageStatus.sent})
-      : createdDate = DateTime.now(),
+      : _messageStatus = messageStatus,
+        createdDate = DateTime.now(),
         _statusUpdatedDate = DateTime.now();
   Message.fromMap(Map<String, dynamic> messageMap)
       : mid = messageMap[MID],
