@@ -1,3 +1,4 @@
+import 'package:chatly/helpers/timestamp_converter.dart';
 import 'package:flutter/foundation.dart';
 
 class Profile {
@@ -33,8 +34,8 @@ class Profile {
         number = profileMap['number'],
         _avatarUrl = profileMap['avatarUrl'],
         _lastSeen = profileMap['lastSeen'],
-        createdDate = profileMap['createdDate'],
-        _updatedDate = profileMap['updatedDate'];
+        createdDate = timestampToDateTime(profileMap['createdDate']),
+        _updatedDate = timestampToDateTime(profileMap['updatedDate']);
   Map<String, dynamic> toMap() => ({
         "pid": pid,
         "name": _name,
