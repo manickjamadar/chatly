@@ -7,12 +7,12 @@ class Profile {
   DateTime _updatedDate;
   //nullable properties
   String _name;
-  String _profileUrl;
+  String _avatarUrl;
   DateTime _lastSeen;
 
   //getters
   String get name => _name;
-  String get profileUrl => _profileUrl;
+  String get avatarUrl => _avatarUrl;
   DateTime get updatedDate => _updatedDate;
   DateTime get lastSeen => _lastSeen;
 
@@ -20,10 +20,10 @@ class Profile {
       {@required this.pid,
       @required this.number,
       String name,
-      String profileUrl,
+      String avatarUrl,
       DateTime lastSeen})
       : _name = name,
-        _profileUrl = profileUrl,
+        _avatarUrl = avatarUrl,
         _lastSeen = lastSeen,
         createdDate = DateTime.now(),
         _updatedDate = DateTime.now();
@@ -31,7 +31,7 @@ class Profile {
       : pid = profileMap['pid'],
         _name = profileMap['name'],
         number = profileMap['number'],
-        _profileUrl = profileMap['profileUrl'],
+        _avatarUrl = profileMap['avatarUrl'],
         _lastSeen = profileMap['lastSeen'],
         createdDate = profileMap['createdDate'],
         _updatedDate = profileMap['updatedDate'];
@@ -39,15 +39,15 @@ class Profile {
         "pid": pid,
         "name": _name,
         "number": number,
-        "profileUrl": _profileUrl,
+        "avatarUrl": _avatarUrl,
         "lastSeen": _lastSeen,
         "createdDate": createdDate,
         "updatedDate": _updatedDate
       });
   void update(
-      {String name, String profileUrl, String lastSeen, DateTime updatedDate}) {
+      {String name, String avatarUrl, String lastSeen, DateTime updatedDate}) {
     _name = name ?? _name;
-    _profileUrl = profileUrl ?? _profileUrl;
+    _avatarUrl = avatarUrl ?? _avatarUrl;
     _lastSeen = lastSeen ?? _lastSeen;
     _updatedDate = updatedDate ?? DateTime.now();
   }
