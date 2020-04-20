@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "759474490373",
+    "firebase_url": "https://chatly-e5957.firebaseio.com",
+    "project_id": "chatly-e5957",
+    "storage_bucket": "chatly-e5957.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:759474490373:android:36dbc1bbc0f69352dee06c",
+        "android_client_info": {
+          "package_name": "com.creanick.chatly"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "759474490373-057pftvlnq60k0715u1jnohg7ddhm9be.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUdTp1ii09W_vTKWpaTmfKG7SmRu6eWPE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "759474490373-057pftvlnq60k0715u1jnohg7ddhm9be.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
