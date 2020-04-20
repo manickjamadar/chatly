@@ -7,7 +7,6 @@ class MessageStatusIcon extends StatelessWidget {
   MessageStatusIcon(this.status, {this.color = Colors.grey});
   @override
   Widget build(BuildContext context) {
-    print(status);
     switch (status) {
       case MessageStatus.sent:
         return Icon(Icons.check, color: color);
