@@ -10,4 +10,8 @@ class Failure {
   factory Failure.internal(String message) {
     return Failure(message, priority: FailurePriority.internal);
   }
+  @override
+  String toString() {
+    return "Failure: $message";
+  }
 }
