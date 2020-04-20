@@ -33,7 +33,7 @@ class Profile {
         _name = profileMap['name'],
         number = profileMap['number'],
         _avatarUrl = profileMap['avatarUrl'],
-        _lastSeen = profileMap['lastSeen'],
+        _lastSeen = timestampToDateTime(profileMap['lastSeen']),
         createdDate = timestampToDateTime(profileMap['createdDate']),
         _updatedDate = timestampToDateTime(profileMap['updatedDate']);
   Map<String, dynamic> toMap() => ({
