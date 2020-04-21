@@ -16,7 +16,7 @@ class ProfileTile extends StatelessWidget {
       height: 60,
       child: ListTile(
         leading: CircleAvatar(
-          radius: 30,
+          radius: 28,
           backgroundColor: Colors.redAccent,
           backgroundImage:
               profile.avatarUrl == null || profile.avatarUrl.isEmpty
