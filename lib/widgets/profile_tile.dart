@@ -3,6 +3,7 @@ import 'package:chatly/helpers/string_methods.dart';
 import 'package:chatly/models/message.dart';
 import 'package:chatly/models/profile.dart';
 import 'package:chatly/widgets/message_status_icon.dart';
+import 'package:chatly/widgets/profile_name.dart';
 import "package:flutter/material.dart";
 
 class ProfileTile extends StatelessWidget {
@@ -17,9 +18,10 @@ class ProfileTile extends StatelessWidget {
         leading: CircleAvatar(
           radius: 30,
           backgroundColor: Colors.redAccent,
-          backgroundImage: profile.avatarUrl == null
-              ? null
-              : NetworkImage(profile.avatarUrl),
+          backgroundImage:
+              profile.avatarUrl == null || profile.avatarUrl.isEmpty
+                  ? null
+                  : NetworkImage(profile.avatarUrl),
           child: profile.avatarUrl == null
               ? Container(
                   child: Icon(
@@ -29,12 +31,8 @@ class ProfileTile extends StatelessWidget {
                 )
               : null,
         ),
-        title: Text(
-          profile.name == null ? profile.number : capitalize(profile.name),
-          style: TextStyle(fontWeight: FontWeight.bold),
-          softWrap: false,
-          overflow: TextOverflow.ellipsis,
-        ),
+        title:
+            ProfileName(profile, style: TextStyle(fontWeight: FontWeight.bold)),
         subtitle: lastMessage == null
             ? null
             : Row(
