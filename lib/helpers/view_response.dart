@@ -4,14 +4,15 @@ class ViewResponse<T> {
   final String message;
   final T data;
   final bool error;
-
   const ViewResponse(this.message, {this.error = false, this.data});
-  factory ViewResponse.fromFailure(Failure failure) {
-    String responseMessage = failure.message;
-    if (failure.priority == FailurePriority.internal) {
-      print(failure);
-      responseMessage = "Something went wrong";
-    }
-    return ViewResponse(responseMessage, error: true, data: null);
-  }
+}
+
+class FailureViewResponse extends ViewResponse<Failure> {
+  FailureViewResponse(Failure failure)
+      : super(
+            failure.priority == FailurePriority.internal
+                ? "Something went wrong"
+                : failure.message,
+            error: true,
+            data: failure);
 }
