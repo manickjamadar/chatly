@@ -8,7 +8,6 @@ class Failure {
     return Failure(message, priority: FailurePriority.public);
   }
   factory Failure.internal(String message) {
-    print("Failure.internal: $message");
     return Failure(message, priority: FailurePriority.internal);
   }
   @override
