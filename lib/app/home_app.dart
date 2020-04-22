@@ -1,5 +1,6 @@
 import 'package:chatly/providers/auth_user_providers.dart';
 import 'package:chatly/providers/profile_provider.dart';
+import 'package:chatly/screens/edit_profile_screen.dart';
 import 'package:chatly/screens/main_screen.dart';
 import 'package:chatly/service/database_service.dart';
 import "package:flutter/material.dart";
@@ -20,7 +21,10 @@ class HomeApp extends StatelessWidget {
               update: (_, databaseService, profileProvider) =>
                   ProfileProvider(databaseService))
         ],
-        child:
-            MaterialApp(debugShowCheckedModeBanner: false, home: MainScreen()));
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: MainScreen(),
+          routes: {EditProfileScreen.routeName: (_) => EditProfileScreen()},
+        ));
   }
 }
