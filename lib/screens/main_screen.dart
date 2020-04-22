@@ -3,6 +3,8 @@ import 'package:chatly/providers/profile_provider.dart';
 import 'package:chatly/providers/view_state_provider.dart';
 import 'package:chatly/widgets/profile_name.dart';
 import 'package:chatly/views/profile_option_popup_button.dart';
+import 'package:chatly/widgets/profile_tile.dart';
+import 'package:chatly/widgets/profile_viewer.dart';
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
 
@@ -27,18 +29,24 @@ class MainScreen extends StatelessWidget {
                 title: Center(
                     child: Row(
                   children: <Widget>[
-                    Container(
-                      width: 40,
-                      height: 40,
-                      child:
-                          profile.avatarUrl == null || profile.avatarUrl.isEmpty
-                              ? Icon(Icons.person)
-                              : ClipRRect(
-                                  borderRadius: BorderRadius.circular(40),
-                                  child: Image.network(profile.avatarUrl)),
-                      decoration: BoxDecoration(
-                          color: Colors.redAccent,
-                          borderRadius: BorderRadius.all(Radius.circular(40))),
+                    ProfileViewer(
+                      profile: profile,
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        child: profile.avatarUrl == null ||
+                                profile.avatarUrl.isEmpty
+                            ? Icon(Icons.person)
+                            : ClipRRect(
+                                borderRadius: BorderRadius.circular(40),
+                                child: Hero(
+                                    tag: profile.avatarUrl,
+                                    child: Image.network(profile.avatarUrl))),
+                        decoration: BoxDecoration(
+                            color: Colors.redAccent,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(40))),
+                      ),
                     ),
                     SizedBox(
                       width: 8,
