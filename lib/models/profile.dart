@@ -46,7 +46,10 @@ class Profile {
         "updatedDate": _updatedDate
       });
   void update(
-      {String name, String avatarUrl, String lastSeen, DateTime updatedDate}) {
+      {String name,
+      String avatarUrl,
+      DateTime lastSeen,
+      DateTime updatedDate}) {
     _name = name ?? _name;
     _avatarUrl = avatarUrl ?? _avatarUrl;
     _lastSeen = lastSeen ?? _lastSeen;
