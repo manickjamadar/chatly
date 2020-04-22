@@ -1,24 +1,31 @@
+import 'package:chatly/app/auth_app.dart';
+import 'package:chatly/app/home_app.dart';
+import 'package:chatly/providers/auth_user_providers.dart';
+import 'package:chatly/service/auth_service.dart';
 import "package:flutter/material.dart";
-import "package:firebase_analytics/firebase_analytics.dart";
-import "package:firebase_analytics/observer.dart";
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  static FirebaseAnalytics analytics = FirebaseAnalytics();
-  static FirebaseAnalyticsObserver observer =
-      FirebaseAnalyticsObserver(analytics: analytics);
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      navigatorObservers: [observer],
-      home: Scaffold(
-          appBar: AppBar(
-            title: Text("Chatly"),
+    return MultiProvider(
+        providers: [
+          Provider(
+            create: (_) => AuthService(),
           ),
-          body: Center(child: Text("Chatly body"))),
-    );
+          ChangeNotifierProxyProvider<AuthService, AuthUserProvider>(
+              create: (_) => AuthUserProvider(null),
+              update: (_, authService, authUserProvider) =>
+                  AuthUserProvider(authService))
+        ],
+        child: Consumer<AuthUserProvider>(
+          builder: (ctx, authUserProvider, c) {
+            return authUserProvider.isAuthenticated ? HomeApp() : AuthApp();
+          },
+        ));
   }
 }
