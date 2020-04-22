@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:chatly/helpers/failure.dart';
+import 'package:chatly/helpers/view_response.dart';
 import 'package:chatly/models/profile.dart';
 import 'package:chatly/providers/view_state_provider.dart';
 import 'package:chatly/service/database_service.dart';
+import 'package:chatly/service/stroage_service.dart';
+import 'package:flutter/foundation.dart';
 
 class ProfileProvider extends ViewStateProvider {
   //database service can be null
@@ -26,6 +31,28 @@ class ProfileProvider extends ViewStateProvider {
       stopExecuting();
     } on Failure catch (failure) {
       print(failure);
+    }
+  }
+
+  Future<ViewResponse<void>> updateUserProfile(
+      {@required String name, @required File avatarFile}) async {
+    if (_databaseService == null || !isProfileAvailable)
+      return FailureViewResponse(
+          Failure.internal("Database service or profile is not available"));
+    try {
+      startExecuting();
+      String avatarUrl;
+      if (avatarFile != null) {
+        final String profileAvatarPath = "profile-avatar-${profile.pid}";
+        avatarUrl =
+            await StorageService.uploadImage(profileAvatarPath, avatarFile);
+      }
+      _profile = await _databaseService.updateUserProfile(
+          name: name, avatarUrl: avatarUrl, lastSeen: DateTime.now());
+      stopExecuting();
+      return ViewResponse("User Profile updated succesfully");
+    } on Failure catch (failure) {
+      return FailureViewResponse(failure);
     }
   }
 }
