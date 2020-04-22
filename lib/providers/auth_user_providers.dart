@@ -96,7 +96,7 @@ class AuthUserProvider extends ViewStateProvider {
     }
   }
 
-  Future<ViewResponse> signOutUser() async {
+  Future<ViewResponse<void>> signOutUser() async {
     try {
       startExecuting();
       await _authService.signOutUser();
