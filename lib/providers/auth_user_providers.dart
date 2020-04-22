@@ -21,6 +21,7 @@ class AuthUserProvider extends ViewStateProvider {
 
   //private methods
   Future<void> _tryAutoFetchUser() async {
+    if (authUser != null) return;
     try {
       startInitialLoader();
       _authUser = await _authService.currentUser();
