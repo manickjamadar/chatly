@@ -28,7 +28,12 @@ class DatabaseService {
       final DocumentSnapshot snapshot = await _getProfileDocument().get();
       //snapshot can be null;
       if (!snapshot.exists) {
-        return await updateUserProfile();
+        final Profile profile = Profile(
+            pid: userId,
+            number: _firebaseUser.phoneNumber,
+            lastSeen: DateTime.now());
+        await _getProfileDocument().setData(profile.toMap(), merge: true);
+        return profile;
       }
       return Profile.fromMap(snapshot.data);
     } catch (error) {
@@ -43,12 +48,11 @@ class DatabaseService {
           "Firebase user is not available during update user profile");
     }
     try {
-      final Profile profile = Profile(
-          pid: userId,
-          number: _firebaseUser.phoneNumber,
-          name: name,
-          avatarUrl: avatarUrl,
-          lastSeen: lastSeen);
+      final Profile profile = await getUserProfile();
+      profile.update(
+          name: name ?? profile.name,
+          avatarUrl: avatarUrl ?? profile.avatarUrl,
+          lastSeen: lastSeen ?? profile.lastSeen);
       await _getProfileDocument().setData(profile.toMap(), merge: true);
       return profile;
     } catch (error) {
