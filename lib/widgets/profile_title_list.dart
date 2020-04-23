@@ -4,14 +4,18 @@ import "package:flutter/material.dart";
 
 class ProfileTileList extends StatelessWidget {
   final List<Profile> profileList;
-  ProfileTileList(this.profileList);
+  final isReplaceScreenToChat;
+  ProfileTileList(this.profileList, {this.isReplaceScreenToChat = false});
   @override
   Widget build(BuildContext context) {
     return profileList.isEmpty
         ? Center(child: Text("No Profile available"))
         : ListView.builder(
             itemBuilder: (ctx, index) {
-              return ProfileTile(profileList[index]);
+              return ProfileTile(
+                profileList[index],
+                isReplaceScreenToChat: isReplaceScreenToChat,
+              );
             },
             itemCount: profileList.length,
           );

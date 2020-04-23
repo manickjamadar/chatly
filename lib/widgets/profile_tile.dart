@@ -1,7 +1,7 @@
 import 'package:chatly/helpers/message_date_formatter.dart';
-import 'package:chatly/helpers/string_methods.dart';
 import 'package:chatly/models/message.dart';
 import 'package:chatly/models/profile.dart';
+import 'package:chatly/screens/chat_screen.dart';
 import 'package:chatly/widgets/message_status_icon.dart';
 import 'package:chatly/widgets/profile_avatart.dart';
 import 'package:chatly/widgets/profile_name.dart';
@@ -11,10 +11,21 @@ import "package:flutter/material.dart";
 class ProfileTile extends StatelessWidget {
   final Profile profile;
   final Message lastMessage;
-  const ProfileTile(this.profile, {this.lastMessage});
+  final bool isReplaceScreenToChat;
+  const ProfileTile(this.profile,
+      {this.lastMessage, this.isReplaceScreenToChat = false});
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      onTap: () {
+        final chatPageRoute =
+            MaterialPageRoute(builder: (ctx) => ChatScreen(profile));
+        if (isReplaceScreenToChat) {
+          Navigator.pushReplacement(context, chatPageRoute);
+        } else {
+          Navigator.push(context, chatPageRoute);
+        }
+      },
       contentPadding: const EdgeInsets.all(10),
       leading: ProfileViewer(
         profile: profile,

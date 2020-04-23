@@ -23,7 +23,10 @@ class SelectProfileScreen extends StatelessWidget {
       ),
       body: allProfileProvider.isInitialized
           ? Center(
-              child: ProfileTileList(allProfile),
+              child: ProfileTileList(
+                allProfile,
+                isReplaceScreenToChat: true,
+              ),
             )
           : Center(child: Text("Loading Contacts...")),
     );
