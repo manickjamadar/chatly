@@ -16,9 +16,11 @@ class ProfileAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isAvatarUrlAvailable =
         profile.avatarUrl != null && profile.avatarUrl.isNotEmpty;
-    return !isAvatarUrlAvailable
-        ? avatarPlaceHolder
-        : SizedBox(
+    return Stack(
+      children: <Widget>[
+        avatarPlaceHolder,
+        if (isAvatarUrlAvailable)
+          SizedBox(
             width: radius,
             height: radius,
             child: ClipRRect(
@@ -28,6 +30,8 @@ class ProfileAvatar extends StatelessWidget {
                     child: Image.network(
                       profile.avatarUrl,
                     ))),
-          );
+          ),
+      ],
+    );
   }
 }
