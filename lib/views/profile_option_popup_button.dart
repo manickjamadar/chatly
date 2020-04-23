@@ -9,11 +9,7 @@ class ProfileOptionPopUpButton extends StatelessWidget {
   void _logOut(BuildContext context) async {
     final AuthUserProvider authUserProvider =
         Provider.of<AuthUserProvider>(context, listen: false);
-    final response = await authUserProvider.signOutUser();
-    if (response.error) {
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text(response.message)));
-    }
+    authUserProvider.signOutUser();
   }
 
   void _editProfile(BuildContext context) {
