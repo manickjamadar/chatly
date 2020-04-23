@@ -24,11 +24,13 @@ class HomeApp extends StatelessWidget {
               create: (_) => ProfileProvider(null),
               update: (_, databaseService, __) =>
                   ProfileProvider(databaseService)),
-          ChangeNotifierProxyProvider<DatabaseService, AllProfileProvider>(
+          ChangeNotifierProxyProvider2<DatabaseService, ProfileProvider,
+                  AllProfileProvider>(
               lazy: false,
-              create: (_) => AllProfileProvider(null),
-              update: (_, databaseService, __) =>
-                  AllProfileProvider(databaseService)),
+              create: (_) => AllProfileProvider(null, null),
+              update: (_, databaseService, profileProvider, __) =>
+                  AllProfileProvider(
+                      databaseService, profileProvider?.profile)),
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
