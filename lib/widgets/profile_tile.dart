@@ -13,50 +13,48 @@ class ProfileTile extends StatelessWidget {
   const ProfileTile(this.profile, {this.lastMessage});
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 60,
-      child: ListTile(
-        leading: ProfileViewer(
-          profile: profile,
-          child: CircleAvatar(
-            radius: 28,
-            backgroundColor: Colors.redAccent,
-            backgroundImage:
-                profile.avatarUrl == null || profile.avatarUrl.isEmpty
-                    ? null
-                    : NetworkImage(profile.avatarUrl),
-            child: profile.avatarUrl == null
-                ? Container(
-                    child: Icon(
-                      Icons.person,
-                      color: Colors.white,
-                    ),
-                  )
-                : null,
-          ),
-        ),
-        title:
-            ProfileName(profile, style: TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: lastMessage == null
-            ? null
-            : Row(
-                children: <Widget>[
-                  if (profile.pid != lastMessage.senderId)
-                    MessageStatusIcon(lastMessage.messageStatus),
-                  SizedBox(width: 4),
-                  Flexible(
-                    child: Text(
-                      lastMessage.content,
-                      softWrap: false,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+    return ListTile(
+      contentPadding: const EdgeInsets.all(10),
+      leading: ProfileViewer(
+        profile: profile,
+        child: CircleAvatar(
+          radius: 28,
+          backgroundColor: Colors.redAccent,
+          backgroundImage:
+              profile.avatarUrl == null || profile.avatarUrl.isEmpty
+                  ? null
+                  : NetworkImage(profile.avatarUrl),
+          child: profile.avatarUrl == null
+              ? Container(
+                  child: Icon(
+                    Icons.person,
+                    color: Colors.white,
                   ),
-                ],
-              ),
-        trailing: lastMessage == null
-            ? null
-            : Text(messageDateFormatter(lastMessage.createdDate)),
+                )
+              : null,
+        ),
       ),
+      title:
+          ProfileName(profile, style: TextStyle(fontWeight: FontWeight.bold)),
+      subtitle: lastMessage == null
+          ? null
+          : Row(
+              children: <Widget>[
+                if (profile.pid != lastMessage.senderId)
+                  MessageStatusIcon(lastMessage.messageStatus),
+                SizedBox(width: 4),
+                Flexible(
+                  child: Text(
+                    lastMessage.content,
+                    softWrap: false,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+      trailing: lastMessage == null
+          ? null
+          : Text(messageDateFormatter(lastMessage.createdDate)),
     );
   }
 }
