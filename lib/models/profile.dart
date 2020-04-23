@@ -46,7 +46,7 @@ class Profile {
         "number": number,
         "avatarUrl": _avatarUrl,
         "lastSeen": _lastSeen,
-        "activeChatProfileIds": activeChatProfileIds,
+        "activeChatProfileIds": activeChatProfileIds ?? [],
         "createdDate": createdDate,
         "updatedDate": _updatedDate
       });
