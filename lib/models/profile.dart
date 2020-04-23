@@ -37,7 +37,11 @@ class Profile {
         number = profileMap['number'],
         _avatarUrl = profileMap['avatarUrl'],
         _lastSeen = timestampToDateTime(profileMap['lastSeen']),
-        activeChatProfileIds = profileMap['activeChatProfileIds'] ?? [],
+        activeChatProfileIds = profileMap['activeChatProfileIds'] == null
+            ? []
+            : profileMap['activeChatProfileIds']
+                .map<String>((i) => i.toString())
+                .toList(),
         createdDate = timestampToDateTime(profileMap['createdDate']),
         _updatedDate = timestampToDateTime(profileMap['updatedDate']);
   Map<String, dynamic> toMap() => ({
