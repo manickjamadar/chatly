@@ -14,15 +14,18 @@ class HomeApp extends StatelessWidget {
     return MultiProvider(
         providers: [
           ProxyProvider<AuthUserProvider, DatabaseService>(
+            lazy: false,
             create: (_) => DatabaseService(null),
             update: (_, authUserProvider, databaseService) =>
                 DatabaseService(authUserProvider.authUser),
           ),
           ChangeNotifierProxyProvider<DatabaseService, ProfileProvider>(
+              lazy: false,
               create: (_) => ProfileProvider(null),
               update: (_, databaseService, __) =>
                   ProfileProvider(databaseService)),
           ChangeNotifierProxyProvider<DatabaseService, AllProfileProvider>(
+              lazy: false,
               create: (_) => AllProfileProvider(null),
               update: (_, databaseService, __) =>
                   AllProfileProvider(databaseService)),
