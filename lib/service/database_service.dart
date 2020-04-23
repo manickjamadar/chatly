@@ -59,4 +59,26 @@ class DatabaseService {
       throw Failure.public("Creating or Updating user profile failed");
     }
   }
+
+  Future<List<Profile>> getAllProfile({includeCurrentProfile = false}) async {
+    try {
+      final QuerySnapshot querySnapshot =
+          await _getProfileCollection().getDocuments();
+      final List<Profile> result = [];
+      querySnapshot.documents.forEach((docSnapshot) {
+        if (docSnapshot.exists) {
+          final profile = Profile.fromMap(docSnapshot.data);
+          if (!includeCurrentProfile) {
+            if (profile.pid == userId) {
+              return;
+            }
+          }
+          result.add(profile);
+        }
+      });
+      return result;
+    } catch (error) {
+      throw Failure.public("Getting all profiles failed");
+    }
+  }
 }
