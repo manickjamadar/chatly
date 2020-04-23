@@ -29,9 +29,11 @@ class AllProfileProvider extends ViewStateProvider {
   }
 
   Future<void> _tryFetchAllProfile() async {
-    startInitialLoader();
-    if (_databaseService == null || _currentProfile == null) return;
+    if (_databaseService == null ||
+        !_databaseService.isUserAvailable ||
+        _currentProfile == null) return;
     try {
+      startInitialLoader();
       _allProfiles = await _databaseService.getAllProfile();
       _activeProfiles = _filterActiveProfile(_currentProfile);
       stopExecuting();

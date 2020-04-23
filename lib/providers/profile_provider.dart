@@ -24,7 +24,9 @@ class ProfileProvider extends ViewStateProvider {
   }
 
   Future<void> _tryFetchingProfile() async {
-    if (_databaseService == null || isProfileAvailable) return;
+    if (_databaseService == null ||
+        !_databaseService.isUserAvailable ||
+        isProfileAvailable) return;
     try {
       startInitialLoader();
       _profile = await _databaseService.getUserProfile();
