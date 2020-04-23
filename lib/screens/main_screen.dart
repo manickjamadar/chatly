@@ -1,9 +1,9 @@
 import 'package:chatly/models/profile.dart';
 import 'package:chatly/providers/profile_provider.dart';
 import 'package:chatly/providers/view_state_provider.dart';
+import 'package:chatly/screens/select_profile_screen.dart';
 import 'package:chatly/widgets/profile_name.dart';
 import 'package:chatly/views/profile_option_popup_button.dart';
-import 'package:chatly/widgets/profile_tile.dart';
 import 'package:chatly/widgets/profile_viewer.dart';
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
@@ -77,7 +77,9 @@ class MainScreen extends StatelessWidget {
               ),
               floatingActionButton: FloatingActionButton(
                 child: Icon(Icons.person),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, SelectProfileScreen.routeName);
+                },
               ),
               body: TabBarView(
                 children: <Widget>[
