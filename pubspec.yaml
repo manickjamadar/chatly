@@ -33,6 +33,7 @@ dependencies:
   provider: ^4.0.5
   image_picker: ^0.6.5+2
   image_cropper: ^1.2.1
+  contacts_service: ^0.4.3
 
 dev_dependencies:
   flutter_test:
