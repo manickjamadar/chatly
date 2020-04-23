@@ -150,8 +150,8 @@ class _AuthScreenState extends State<AuthScreen> {
                                     child: getLoadingDialog("Verifying otp"));
                                 final response =
                                     await authUserProvider.verifyOtp(otp);
+                                Navigator.pop(ctx);
                                 if (response.error) {
-                                  Navigator.pop(ctx);
                                   resetVerifyOtpState(ctx, response.message);
                                 }
                               }
