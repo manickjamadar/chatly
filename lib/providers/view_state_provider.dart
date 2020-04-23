@@ -9,6 +9,8 @@ class ViewStateProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  bool get isInitialized =>
+      state != ViewState.initial && state != ViewState.initialLoading;
   void startInitialLoader() => setState(ViewState.initialLoading);
   void startExecuting() => setState(ViewState.executing);
   void stopExecuting() => setState(ViewState.idle);
