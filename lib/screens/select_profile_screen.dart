@@ -16,7 +16,7 @@ class SelectProfileScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text("Select Contact"),
-            Text("${allProfile.length} contacts",
+            Text("${allProfile?.length ?? 0} contacts",
                 style: TextStyle(fontSize: 13, fontWeight: FontWeight.normal))
           ],
         ),
