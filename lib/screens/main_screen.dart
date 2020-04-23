@@ -3,6 +3,7 @@ import 'package:chatly/providers/profile_provider.dart';
 import 'package:chatly/providers/view_state_provider.dart';
 import 'package:chatly/screens/select_profile_screen.dart';
 import 'package:chatly/views/active_chat_view.dart';
+import 'package:chatly/widgets/profile_avatart.dart';
 import 'package:chatly/widgets/profile_name.dart';
 import 'package:chatly/views/profile_option_popup_button.dart';
 import 'package:chatly/widgets/profile_viewer.dart';
@@ -31,24 +32,7 @@ class MainScreen extends StatelessWidget {
                     child: Row(
                   children: <Widget>[
                     ProfileViewer(
-                      profile: profile,
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        child: profile.avatarUrl == null ||
-                                profile.avatarUrl.isEmpty
-                            ? Icon(Icons.person)
-                            : ClipRRect(
-                                borderRadius: BorderRadius.circular(40),
-                                child: Hero(
-                                    tag: profile.avatarUrl,
-                                    child: Image.network(profile.avatarUrl))),
-                        decoration: BoxDecoration(
-                            color: Colors.redAccent,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(40))),
-                      ),
-                    ),
+                        profile: profile, child: ProfileAvatar(profile)),
                     SizedBox(
                       width: 8,
                     ),

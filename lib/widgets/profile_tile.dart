@@ -3,6 +3,7 @@ import 'package:chatly/helpers/string_methods.dart';
 import 'package:chatly/models/message.dart';
 import 'package:chatly/models/profile.dart';
 import 'package:chatly/widgets/message_status_icon.dart';
+import 'package:chatly/widgets/profile_avatart.dart';
 import 'package:chatly/widgets/profile_name.dart';
 import 'package:chatly/widgets/profile_viewer.dart';
 import "package:flutter/material.dart";
@@ -17,21 +18,9 @@ class ProfileTile extends StatelessWidget {
       contentPadding: const EdgeInsets.all(10),
       leading: ProfileViewer(
         profile: profile,
-        child: CircleAvatar(
-          radius: 28,
-          backgroundColor: Colors.redAccent,
-          backgroundImage:
-              profile.avatarUrl == null || profile.avatarUrl.isEmpty
-                  ? null
-                  : NetworkImage(profile.avatarUrl),
-          child: profile.avatarUrl == null
-              ? Container(
-                  child: Icon(
-                    Icons.person,
-                    color: Colors.white,
-                  ),
-                )
-              : null,
+        child: ProfileAvatar(
+          profile,
+          radius: 50,
         ),
       ),
       title:
