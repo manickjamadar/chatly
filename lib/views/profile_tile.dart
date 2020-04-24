@@ -18,9 +18,10 @@ class ProfileTile extends StatelessWidget {
     final MessageProvider messageProvider =
         Provider.of<MessageProvider>(context);
     Message lastMessage;
-    if (isActiveProfile) {
+    if (isActiveProfile && messageProvider.messagesList.isNotEmpty) {
       lastMessage = messageProvider.messagesList.first;
     }
+    bool shouldShowMetaData = isActiveProfile && lastMessage != null;
     return ListTile(
       onTap: () {
         final chatPageRoute = MaterialPageRoute(
@@ -47,11 +48,11 @@ class ProfileTile extends StatelessWidget {
       ),
       title:
           ProfileName(profile, style: TextStyle(fontWeight: FontWeight.bold)),
-      subtitle: isActiveProfile
+      subtitle: shouldShowMetaData
           ? Text(lastMessage.content,
               softWrap: false, overflow: TextOverflow.ellipsis)
           : null,
-      trailing: isActiveProfile
+      trailing: shouldShowMetaData
           ? Text(
               messageDateFormatter(
                 lastMessage.createdDate,
