@@ -60,6 +60,17 @@ class DatabaseService {
     }
   }
 
+  Future<void> addActiveChatProfileId(String profileId) async {
+    if (!isUserAvailable) return;
+    try {
+      await _getProfileDocument().setData({
+        Profile.ACTIVE_CHAT_PROFILE_IDS: FieldValue.arrayUnion([profileId])
+      }, merge: true);
+    } catch (error) {
+      throw Failure.public("Adding active chat profile id failed");
+    }
+  }
+
   Future<List<Profile>> getAllProfile({includeCurrentProfile = false}) async {
     try {
       final QuerySnapshot querySnapshot =

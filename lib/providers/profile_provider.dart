@@ -89,9 +89,17 @@ class ProfileProvider extends ViewStateProvider {
     }).toList();
   }
 
-  void addActiveChatProfileId(String profileId) {
-    startExecuting();
-    _profile.addActiveChatUser(profileId);
-    stopExecuting();
+  Future<ViewResponse<void>> addActiveChatProfileId(String profileId) async {
+    try {
+      _profile.addActiveChatUser(profileId);
+      startExecuting();
+      await _databaseService.addActiveChatProfileId(profileId);
+      stopExecuting();
+      return ViewResponse("Adding new active profile successful");
+    } on Failure catch (failure) {
+      _profile.removedRecentAddedActiveChatUserId();
+      stopExecuting();
+      return FailureViewResponse(failure);
+    }
   }
 }
