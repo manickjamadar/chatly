@@ -38,9 +38,7 @@ class ProfileProvider extends ViewStateProvider {
               senderProfile: profile,
               receiverProfile: otherProfile)
             ..fetchExistingMessage(
-                byPass:
-                    profile.activeChatProfileIds.indexOf(otherProfile.pid) ==
-                        -1);
+                byPass: !profile.isActiveChatIdAvailable(otherProfile.pid));
         });
       }
     } on Failure catch (failure) {
