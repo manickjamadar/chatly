@@ -2,6 +2,7 @@ import 'package:chatly/models/profile.dart';
 import 'package:chatly/providers/profile_provider.dart';
 import 'package:chatly/providers/view_state_provider.dart';
 import 'package:chatly/screens/select_profile_screen.dart';
+import 'package:chatly/views/active_chat_profile_list.dart';
 import 'package:chatly/widgets/profile_avatart.dart';
 import 'package:chatly/widgets/profile_name.dart';
 import 'package:chatly/views/profile_option_popup_button.dart';
@@ -67,7 +68,7 @@ class MainScreen extends StatelessWidget {
               ),
               body: TabBarView(
                 children: <Widget>[
-                  Center(child: Text("no active user")),
+                  ActiveChatProfileList(),
                   Center(
                     child: Text("Status Coming Soon"),
                   ),
