@@ -11,7 +11,9 @@ class ProfileTileList extends StatelessWidget {
   Widget build(BuildContext context) {
     final AllProfileProvider allProfileProvider =
         Provider.of<AllProfileProvider>(context);
-    final List<Profile> profileList = allProfileProvider.allProfiles;
+    final List<Profile> profileList = isActiveProfileList
+        ? allProfileProvider.activeProfiles
+        : allProfileProvider.allProfiles;
     return profileList.isEmpty
         ? Center(child: Text("No Profile available"))
         : ListView.builder(
