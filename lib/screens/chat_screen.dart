@@ -1,4 +1,5 @@
 import 'package:chatly/models/profile.dart';
+import 'package:chatly/providers/all_profile_provider.dart';
 import 'package:chatly/providers/message_provider.dart';
 import 'package:chatly/providers/profile_provider.dart';
 import 'package:chatly/views/message_list_view.dart';
@@ -19,6 +20,12 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget sendButton(BuildContext context) {
     final MessageProvider messageProvider =
         Provider.of<MessageProvider>(context, listen: false);
+    // final ProfileProvider profileProvider =
+    //     Provider.of<ProfileProvider>(context, listen: false);
+    final Profile receiverProfile =
+        Provider.of<Profile>(context, listen: false);
+    final AllProfileProvider allProfileProvider =
+        Provider.of<AllProfileProvider>(context);
     return ClipOval(
       child: Container(
         color: Theme.of(context).primaryColor,
@@ -31,6 +38,9 @@ class _ChatScreenState extends State<ChatScreen> {
             final String messageContent = _messageContentController.text;
             if (messageContent.isEmpty) return;
             _messageContentController.clear();
+            if (messageProvider.messagesList.isEmpty) {
+              allProfileProvider.addActiveProfile(receiverProfile);
+            }
             messageProvider.sendMessage(content: messageContent);
           },
         ),
