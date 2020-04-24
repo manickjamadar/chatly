@@ -87,11 +87,13 @@ class ProfileProvider extends ViewStateProvider {
   List<Profile> getActiveProfiles() {
     if (profile.activeChatProfileIds.isEmpty || _allProfiles.isEmpty) return [];
     return _allProfiles.where((otherProfile) {
-      return profile.activeChatProfileIds.indexOf(otherProfile.pid) != -1;
+      return profile.isActiveChatIdAvailable(otherProfile.pid);
     }).toList();
   }
 
   Future<ViewResponse<void>> addActiveChatProfileId(String profileId) async {
+    if (_profile.isActiveChatIdAvailable(profileId))
+      return ViewResponse("Adding new profile id successful");
     try {
       _profile.addActiveChatUser(profileId);
       startExecuting();
