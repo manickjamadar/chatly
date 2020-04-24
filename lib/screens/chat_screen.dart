@@ -8,8 +8,7 @@ import 'package:provider/provider.dart';
 
 class ChatScreen extends StatelessWidget {
   static const String routeName = "/chat-screen";
-  final Profile receiverProifle;
-  ChatScreen(this.receiverProifle);
+  ChatScreen();
 
   Widget sendButton(BuildContext context, {void Function() onPressed}) {
     return ClipOval(
@@ -55,7 +54,7 @@ class ChatScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final ProfileProvider profileProvider =
         Provider.of<ProfileProvider>(context);
-    final Profile senderProfile = profileProvider.profile;
+    final Profile receiverProfile = Provider.of<Profile>(context);
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -78,13 +77,13 @@ class ChatScreen extends StatelessWidget {
                   width: 2,
                 ),
                 ProfileAvatar(
-                  receiverProifle,
+                  receiverProfile,
                   radius: 30,
                 )
               ],
             ),
           ),
-          title: ProfileName(receiverProifle),
+          title: ProfileName(receiverProfile),
           actions: <Widget>[
             IconButton(icon: Icon(Icons.videocam), onPressed: () {}),
             IconButton(icon: Icon(Icons.call), onPressed: () {}),

@@ -7,6 +7,7 @@ import 'package:chatly/widgets/profile_avatart.dart';
 import 'package:chatly/widgets/profile_name.dart';
 import 'package:chatly/widgets/profile_viewer.dart';
 import "package:flutter/material.dart";
+import 'package:provider/provider.dart';
 
 class ProfileTile extends StatelessWidget {
   final Profile profile;
@@ -18,8 +19,9 @@ class ProfileTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {
-        final chatPageRoute =
-            MaterialPageRoute(builder: (ctx) => ChatScreen(profile));
+        final chatPageRoute = MaterialPageRoute(
+            builder: (ctx) =>
+                Provider.value(value: profile, child: ChatScreen()));
         if (isReplaceScreenToChat) {
           Navigator.pushReplacement(context, chatPageRoute);
         } else {
