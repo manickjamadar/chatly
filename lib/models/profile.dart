@@ -2,6 +2,7 @@ import 'package:chatly/helpers/timestamp_converter.dart';
 import 'package:flutter/foundation.dart';
 
 class Profile {
+  static const String ACTIVE_CHAT_PROFILE_IDS = "activeChatProfileIds";
   final String pid;
   final DateTime createdDate;
   final String number;
@@ -62,6 +63,10 @@ class Profile {
   void removeActiveChatUser(int index) {
     activeChatProfileIds.removeAt(index);
     _updatedDate = DateTime.now();
+  }
+
+  void removedRecentAddedActiveChatUserId() {
+    removeActiveChatUser(activeChatProfileIds.length - 1);
   }
 
   void update(
