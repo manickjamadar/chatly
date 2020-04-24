@@ -111,7 +111,12 @@ class _AuthScreenState extends State<AuthScreen> {
                                       context: ctx,
                                       child:
                                           getLoadingDialog("Verfying number"));
+                                }, onVerificationEnd: () {
+                                  Navigator.pop(context);
                                 }, onVerificationFailed: (failureResponse) {
+                                  if (Navigator.canPop(context)) {
+                                    Navigator.pop(context);
+                                  }
                                   resetState(ctx, failureResponse.message);
                                 }, onCodeTimeout: () {
                                   resetState(ctx, "Code timeout , try again");

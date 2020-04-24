@@ -52,7 +52,8 @@ class AuthUserProvider extends ViewStateProvider {
   Future<ViewResponse<void>> sentOtp(String phoneNumber,
       {@required void Function() onAutoVerificationStart,
       @required void Function(FailureViewResponse) onVerificationFailed,
-      @required void Function() onCodeTimeout}) async {
+      @required void Function() onCodeTimeout,
+      @required void Function() onVerificationEnd}) async {
     try {
       startExecuting();
       await _authService.sentOtp(
@@ -61,6 +62,10 @@ class AuthUserProvider extends ViewStateProvider {
             onAutoVerificationStart();
             try {
               await _signInUser(credential);
+
+              if (onVerificationEnd != null) {
+                onVerificationEnd();
+              }
             } on Failure catch (failure) {
               onVerificationFailed(FailureViewResponse(failure));
             }
