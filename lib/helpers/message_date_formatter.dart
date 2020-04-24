@@ -14,5 +14,5 @@ String messageDateFormatter(DateTime dateTime) {
 }
 
 String messsageTimeFormatter(DateTime dateTime) {
-  return DateFormat('h:m').format(dateTime);
+  return DateFormat('h:m a').format(dateTime);
 }
