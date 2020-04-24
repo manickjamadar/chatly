@@ -6,20 +6,24 @@ import 'package:flutter/foundation.dart';
 class MessageProvider extends ViewStateProvider {
   List<Message> _messagesList = [];
   List<Message> get messagesList => _messagesList;
+  final Profile senderProfile;
   final Profile receiverProfile;
-  MessageProvider({@required this.receiverProfile});
+  MessageProvider(
+      {@required this.senderProfile, @required this.receiverProfile});
 
-  void fetchExistingMessage() {
+  void fetchExistingMessage({bool byPass = false}) {
+    if (byPass) return stopExecuting();
     startInitialLoader();
     stopExecuting();
   }
 
-  void sendMessage({@required String senderId, @required String content}) {
-    if (content == null || receiverProfile == null) return;
+  void sendMessage({@required String content}) {
+    if (content == null || senderProfile == null || receiverProfile == null)
+      return;
     final Message message = Message(
       mid: DateTime.now().toIso8601String(),
       content: content,
-      senderId: senderId,
+      senderId: senderProfile.pid,
       receiverId: receiverProfile.pid,
     );
     _messagesList.insert(0, message);
