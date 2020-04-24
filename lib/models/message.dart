@@ -35,7 +35,7 @@ class Message {
         senderId = messageMap[SENDERID],
         receiverId = messageMap[RECEIVERID],
         content = messageMap[CONTENT],
-        createdDate = messageMap[CREATEDDATE],
+        createdDate = timestampToDateTime(messageMap[CREATEDDATE]),
         _messageStatus = MessageStatus.values[messageMap[MESSAGESTATUS]],
         _statusUpdatedDate =
             timestampToDateTime(messageMap[STATUSUPDATEDDATE] as Timestamp);
