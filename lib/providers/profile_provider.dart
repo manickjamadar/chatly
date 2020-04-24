@@ -57,4 +57,10 @@ class ProfileProvider extends ViewStateProvider {
       return FailureViewResponse(failure);
     }
   }
+
+  void addActiveChatProfileId(String profileId) {
+    startExecuting();
+    _profile.addActiveChatUser(profileId);
+    stopExecuting();
+  }
 }
