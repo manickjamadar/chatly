@@ -20,12 +20,10 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget sendButton(BuildContext context) {
     final MessageProvider messageProvider =
         Provider.of<MessageProvider>(context, listen: false);
-    // final ProfileProvider profileProvider =
-    //     Provider.of<ProfileProvider>(context, listen: false);
+    final ProfileProvider profileProvider =
+        Provider.of<ProfileProvider>(context, listen: false);
     final Profile receiverProfile =
         Provider.of<Profile>(context, listen: false);
-    final AllProfileProvider allProfileProvider =
-        Provider.of<AllProfileProvider>(context);
     return ClipOval(
       child: Container(
         color: Theme.of(context).primaryColor,
@@ -39,9 +37,10 @@ class _ChatScreenState extends State<ChatScreen> {
             if (messageContent.isEmpty) return;
             _messageContentController.clear();
             if (messageProvider.messagesList.isEmpty) {
-              allProfileProvider.addActiveProfile(receiverProfile);
+              profileProvider.addActiveChatProfileId(receiverProfile.pid);
             }
-            messageProvider.sendMessage(content: messageContent);
+            messageProvider.sendMessage(
+                content: messageContent, senderId: profileProvider.profile.pid);
           },
         ),
       ),
