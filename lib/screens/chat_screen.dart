@@ -1,4 +1,5 @@
 import 'package:chatly/models/profile.dart';
+import 'package:chatly/providers/message_provider.dart';
 import 'package:chatly/providers/profile_provider.dart';
 import 'package:chatly/views/message_list_view.dart';
 import 'package:chatly/widgets/profile_avatart.dart';
@@ -6,11 +7,18 @@ import 'package:chatly/widgets/profile_name.dart';
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
 
-class ChatScreen extends StatelessWidget {
+class ChatScreen extends StatefulWidget {
   static const String routeName = "/chat-screen";
-  ChatScreen();
 
-  Widget sendButton(BuildContext context, {void Function() onPressed}) {
+  @override
+  _ChatScreenState createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
+  TextEditingController _messageContentController;
+  Widget sendButton(BuildContext context) {
+    final MessageProvider messageProvider =
+        Provider.of<MessageProvider>(context, listen: false);
     return ClipOval(
       child: Container(
         color: Theme.of(context).primaryColor,
@@ -19,7 +27,12 @@ class ChatScreen extends StatelessWidget {
             Icons.send,
             color: Colors.white,
           ),
-          onPressed: onPressed,
+          onPressed: () {
+            final String messageContent = _messageContentController.text;
+            if (messageContent.isEmpty) return;
+            _messageContentController.clear();
+            messageProvider.sendMessage(content: messageContent);
+          },
         ),
       ),
     );
@@ -33,6 +46,7 @@ class ChatScreen extends StatelessWidget {
         children: <Widget>[
           Flexible(
               child: TextField(
+            controller: _messageContentController,
             decoration: InputDecoration(
                 prefixIcon: Icon(Icons.sentiment_satisfied),
                 contentPadding:
@@ -48,6 +62,18 @@ class ChatScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  @override
+  void initState() {
+    _messageContentController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _messageContentController = TextEditingController();
+    super.dispose();
   }
 
   @override
