@@ -130,4 +130,23 @@ class DatabaseService {
       throw Failure.public("Message sent failed");
     }
   }
+
+  Future<List<Message>> fetchAllMessage(
+      {@required senderId, @required receiverId}) async {
+    try {
+      final QuerySnapshot querySnapshot = await _getMessageCollection(
+              senderId: senderId, receiverId: receiverId)
+          .orderBy(Message.CREATEDDATE, descending: true)
+          .getDocuments();
+      final List<Message> result = [];
+      querySnapshot.documents.forEach((docSnapshot) {
+        if (docSnapshot.exists) {
+          result.add(Message.fromMap(docSnapshot.data));
+        }
+      });
+      return result;
+    } catch (error) {
+      throw Failure.public("Fetching all message error");
+    }
+  }
 }
