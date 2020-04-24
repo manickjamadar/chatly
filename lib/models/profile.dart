@@ -69,6 +69,9 @@ class Profile {
     removeActiveChatUser(activeChatProfileIds.length - 1);
   }
 
+  bool isActiveChatIdAvailable(String id) =>
+      activeChatProfileIds.indexOf(id) != -1;
+
   void update(
       {String name,
       String avatarUrl,
