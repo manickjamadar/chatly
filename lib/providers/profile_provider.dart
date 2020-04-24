@@ -58,6 +58,13 @@ class ProfileProvider extends ViewStateProvider {
     }
   }
 
+  List<Profile> getActiveProfiles(List<Profile> allProfile) {
+    if (profile.activeChatProfileIds.isEmpty) return [];
+    return allProfile.where((otherProfile) {
+      return profile.activeChatProfileIds.indexOf(otherProfile.pid) != -1;
+    }).toList();
+  }
+
   void addActiveChatProfileId(String profileId) {
     startExecuting();
     _profile.addActiveChatUser(profileId);
