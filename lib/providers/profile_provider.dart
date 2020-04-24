@@ -34,7 +34,9 @@ class ProfileProvider extends ViewStateProvider {
       if (_allProfiles.isNotEmpty) {
         _allProfiles.forEach((otherProfile) {
           _messageProviderList[otherProfile.pid] = MessageProvider(
-              senderProfile: profile, receiverProfile: otherProfile)
+              databaseService: _databaseService,
+              senderProfile: profile,
+              receiverProfile: otherProfile)
             ..fetchExistingMessage(
                 byPass:
                     profile.activeChatProfileIds.indexOf(otherProfile.pid) ==
