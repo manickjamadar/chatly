@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:chatly/helpers/failure.dart';
@@ -22,11 +23,27 @@ class ProfileProvider extends ViewStateProvider {
   Map<String, MessageProvider> _messageProviderList = {};
   MessageProvider getMessageProvider(String profileId) =>
       _messageProviderList[profileId];
+  StreamSubscription<Profile> latestProfileSubscription;
+  void cancelLatestProfileSubscription() {
+    if (latestProfileSubscription != null) {
+      latestProfileSubscription.cancel();
+      latestProfileSubscription = null;
+    }
+  }
 
   ProfileProvider(DatabaseService databaseService)
       : _databaseService = databaseService {
-    if (databaseService == null) return;
+    if (databaseService == null || !_databaseService.isUserAvailable) return;
     _tryFetchingProfile();
+    latestProfileSubscription =
+        _databaseService.getLatestProfile().listen((profile) {
+      if (profile == null || _profile == null) return;
+      if (_profile.activeChatProfileIds.length !=
+          profile.activeChatProfileIds.length) {
+        _profile = profile;
+        notifyListeners();
+      }
+    });
   }
   Future<void> _fetchAllProfile() async {
     try {
@@ -103,5 +120,14 @@ class ProfileProvider extends ViewStateProvider {
       stopExecuting();
       return FailureViewResponse(failure);
     }
+  }
+
+  @override
+  void dispose() {
+    cancelLatestProfileSubscription();
+    _messageProviderList.forEach((id, messageProvider) {
+      messageProvider.dispose();
+    });
+    super.dispose();
   }
 }
