@@ -1,5 +1,5 @@
 import 'package:chatly/providers/all_profile_provider.dart';
-import 'package:chatly/widgets/profile_title_list.dart';
+import 'package:chatly/views/profile_title_list.dart';
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
 
@@ -23,10 +23,7 @@ class SelectProfileScreen extends StatelessWidget {
       ),
       body: allProfileProvider.isInitialized
           ? Center(
-              child: ProfileTileList(
-                allProfile,
-                isReplaceScreenToChat: true,
-              ),
+              child: ProfileTileList(),
             )
           : Center(child: Text("Loading Contacts...")),
     );
