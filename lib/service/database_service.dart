@@ -163,4 +163,9 @@ class DatabaseService {
         if (!firstDoc.exists) return null;
         return Message.fromMap(firstDoc.data);
       });
+  Stream<Profile> getLatestProfile() =>
+      _getProfileDocument().snapshots().map((docSnapshot) {
+        if (!docSnapshot.exists) return null;
+        return Profile.fromMap(docSnapshot.data);
+      });
 }
