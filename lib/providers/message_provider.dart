@@ -1,15 +1,26 @@
+import 'package:chatly/helpers/failure.dart';
+import 'package:chatly/helpers/view_response.dart';
 import 'package:chatly/models/message.dart';
 import 'package:chatly/models/profile.dart';
 import 'package:chatly/providers/view_state_provider.dart';
+import 'package:chatly/service/database_service.dart';
 import 'package:flutter/foundation.dart';
 
 class MessageProvider extends ViewStateProvider {
+  DatabaseService _databaseService;
   List<Message> _messagesList = [];
   List<Message> get messagesList => _messagesList;
   final Profile senderProfile;
   final Profile receiverProfile;
+  bool get isExecutable =>
+      _databaseService != null &&
+      senderProfile != null &&
+      receiverProfile != null;
   MessageProvider(
-      {@required this.senderProfile, @required this.receiverProfile});
+      {@required DatabaseService databaseService,
+      @required this.senderProfile,
+      @required this.receiverProfile})
+      : _databaseService = databaseService;
 
   void fetchExistingMessage({bool byPass = false}) {
     if (byPass) return stopExecuting();
@@ -17,16 +28,26 @@ class MessageProvider extends ViewStateProvider {
     stopExecuting();
   }
 
-  void sendMessage({@required String content}) {
-    if (content == null || senderProfile == null || receiverProfile == null)
-      return;
+  Future<ViewResponse<void>> sendMessage({@required String content}) async {
+    if (!isExecutable || content == null)
+      return FailureViewResponse(Failure.internal("Some dependencies missing"));
     final Message message = Message(
-      mid: DateTime.now().toIso8601String(),
+      mid: _databaseService.getNewMessageId(
+          senderId: senderProfile.pid, receiverId: receiverProfile.pid),
       content: content,
       senderId: senderProfile.pid,
       receiverId: receiverProfile.pid,
     );
-    _messagesList.insert(0, message);
-    stopExecuting();
+    try {
+      _messagesList.insert(0, message);
+      startExecuting();
+      await _databaseService.sendMessageToServer(message);
+      stopExecuting();
+      return ViewResponse("Sending message successful");
+    } on Failure catch (failure) {
+      _messagesList.removeAt(0);
+      stopExecuting();
+      return FailureViewResponse(failure);
+    }
   }
 }
