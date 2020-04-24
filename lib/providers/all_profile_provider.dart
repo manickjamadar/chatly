@@ -1,5 +1,6 @@
 import 'package:chatly/helpers/failure.dart';
 import 'package:chatly/models/profile.dart';
+import 'package:chatly/providers/message_provider.dart';
 import 'package:chatly/providers/view_state_provider.dart';
 import 'package:chatly/service/database_service.dart';
 
@@ -8,6 +9,9 @@ class AllProfileProvider extends ViewStateProvider {
   List<Profile> _activeProfiles;
   List<Profile> _allProfiles;
   Profile _currentProfile;
+  Map<String, MessageProvider> _messageProviderList = {};
+  MessageProvider getMessageProvider(String profileId) =>
+      _messageProviderList[profileId];
   //getters
   List<Profile> get activeProfiles => _activeProfiles;
   List<Profile> get allProfiles => _allProfiles;
@@ -21,10 +25,11 @@ class AllProfileProvider extends ViewStateProvider {
     _tryFetchAllProfile();
   }
 
-  List<Profile> _filterActiveProfile(Profile profile) {
-    if (profile == null || profile.activeChatProfileIds.isEmpty) return [];
+  List<Profile> _filterActiveProfilesFromAllProfile(Profile currentProfile) {
+    if (currentProfile == null || currentProfile.activeChatProfileIds.isEmpty)
+      return [];
     return allProfiles
-        .where((p) => profile.activeChatProfileIds.indexOf(p.pid) != -1)
+        .where((p) => currentProfile.activeChatProfileIds.indexOf(p.pid) != -1)
         .toList();
   }
 
@@ -35,10 +40,30 @@ class AllProfileProvider extends ViewStateProvider {
     try {
       startInitialLoader();
       _allProfiles = await _databaseService.getAllProfile();
-      _activeProfiles = _filterActiveProfile(_currentProfile);
+      if (_allProfiles.isNotEmpty) {
+        _allProfiles.forEach((profile) {
+          _messageProviderList[profile.pid] = MessageProvider(
+              senderProfile: _currentProfile, receiverProfile: profile)
+            ..stopExecuting();
+        });
+        _activeProfiles = _filterActiveProfilesFromAllProfile(_currentProfile);
+        if (_activeProfiles.isNotEmpty) {
+          _activeProfiles.forEach((activeProfile) {
+            getMessageProvider(activeProfile.pid).fetchExistingMessage();
+          });
+        }
+      }
       stopExecuting();
     } on Failure catch (failure) {
       print(failure);
     }
+  }
+
+  @override
+  void dispose() {
+    _messageProviderList.forEach((id, mp) {
+      mp.dispose();
+    });
+    super.dispose();
   }
 }
