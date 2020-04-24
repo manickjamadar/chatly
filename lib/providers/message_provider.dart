@@ -22,10 +22,22 @@ class MessageProvider extends ViewStateProvider {
       @required this.receiverProfile})
       : _databaseService = databaseService;
 
-  void fetchExistingMessage({bool byPass = false}) {
+  Future<void> fetchExistingMessage({bool byPass = false}) async {
+    if (!isExecutable) {
+      throw Failure.internal(
+          "Message provider is not executable on fetching existing message");
+    }
     if (byPass) return stopExecuting();
-    startInitialLoader();
-    stopExecuting();
+    try {
+      startInitialLoader();
+      _messagesList = await _databaseService.fetchAllMessage(
+          senderId: senderProfile.pid, receiverId: receiverProfile.pid);
+      stopExecuting();
+    } on Failure catch (failure) {
+      _messagesList = [];
+      stopExecuting();
+      print(failure);
+    }
   }
 
   Future<ViewResponse<void>> sendMessage({@required String content}) async {
