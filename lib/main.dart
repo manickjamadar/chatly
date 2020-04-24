@@ -37,13 +37,11 @@ class MyApp extends StatelessWidget {
               create: (_) => ProfileProvider(null),
               update: (_, databaseService, __) =>
                   ProfileProvider(databaseService)),
-          ChangeNotifierProxyProvider2<DatabaseService, ProfileProvider,
-                  AllProfileProvider>(
+          ChangeNotifierProxyProvider<DatabaseService, AllProfileProvider>(
               lazy: false,
-              create: (_) => AllProfileProvider(null, null),
-              update: (_, databaseService, profileProvider, __) =>
-                  AllProfileProvider(
-                      databaseService, profileProvider?.profile)),
+              create: (_) => AllProfileProvider(null),
+              update: (_, databaseService, __) =>
+                  AllProfileProvider(databaseService)),
         ],
         child: Consumer<AuthUserProvider>(
           builder: (ctx, authUserProvider, c) {

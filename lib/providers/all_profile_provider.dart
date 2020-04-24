@@ -6,59 +6,30 @@ import 'package:chatly/service/database_service.dart';
 
 class AllProfileProvider extends ViewStateProvider {
   DatabaseService _databaseService;
-  List<Profile> _activeProfiles;
   List<Profile> _allProfiles;
-  Profile _currentProfile;
   Map<String, MessageProvider> _messageProviderList = {};
   MessageProvider getMessageProvider(String profileId) =>
       _messageProviderList[profileId];
   //getters
-  List<Profile> get activeProfiles => _activeProfiles;
   List<Profile> get allProfiles => _allProfiles;
 
   //create
-  AllProfileProvider(DatabaseService databaseService, Profile profile)
+  AllProfileProvider(DatabaseService databaseService)
       : _databaseService = databaseService,
-        _activeProfiles = [],
-        _allProfiles = [],
-        _currentProfile = profile {
+        _allProfiles = [] {
     _tryFetchAllProfile();
   }
-
-  List<Profile> _filterActiveProfilesFromAllProfile(Profile currentProfile) {
-    if (currentProfile == null || currentProfile.activeChatProfileIds.isEmpty)
-      return [];
-    return allProfiles
-        .where((p) => currentProfile.activeChatProfileIds.indexOf(p.pid) != -1)
-        .toList();
-  }
-
-  void addActiveProfile(Profile profile) {
-    startExecuting();
-    _activeProfiles.add(profile);
-    stopExecuting();
-  }
-
   Future<void> _tryFetchAllProfile() async {
     if (_allProfiles.isNotEmpty) return;
-    if (_databaseService == null ||
-        !_databaseService.isUserAvailable ||
-        _currentProfile == null) return;
+    if (_databaseService == null || !_databaseService.isUserAvailable) return;
     try {
       startInitialLoader();
       _allProfiles = await _databaseService.getAllProfile();
       if (_allProfiles.isNotEmpty) {
         _allProfiles.forEach((profile) {
-          _messageProviderList[profile.pid] = MessageProvider(
-              senderProfile: _currentProfile, receiverProfile: profile)
-            ..stopExecuting();
+          _messageProviderList[profile.pid] =
+              MessageProvider(receiverProfile: profile)..fetchExistingMessage();
         });
-        _activeProfiles = _filterActiveProfilesFromAllProfile(_currentProfile);
-        if (_activeProfiles.isNotEmpty) {
-          _activeProfiles.forEach((activeProfile) {
-            getMessageProvider(activeProfile.pid).fetchExistingMessage();
-          });
-        }
       }
       stopExecuting();
     } on Failure catch (failure) {
