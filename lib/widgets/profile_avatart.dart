@@ -25,11 +25,9 @@ class ProfileAvatar extends StatelessWidget {
             height: radius,
             child: ClipRRect(
                 borderRadius: BorderRadius.circular(radius),
-                child: Hero(
-                    tag: profile.avatarUrl,
-                    child: Image.network(
-                      profile.avatarUrl,
-                    ))),
+                child: Image.network(
+                  profile.avatarUrl,
+                )),
           ),
       ],
     );
