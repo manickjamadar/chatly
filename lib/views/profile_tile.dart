@@ -1,3 +1,5 @@
+import 'package:chatly/helpers/message_date_formatter.dart';
+import 'package:chatly/models/message.dart';
 import 'package:chatly/models/profile.dart';
 import 'package:chatly/providers/message_provider.dart';
 import 'package:chatly/screens/chat_screen.dart';
@@ -15,6 +17,10 @@ class ProfileTile extends StatelessWidget {
     final Profile profile = Provider.of<Profile>(context);
     final MessageProvider messageProvider =
         Provider.of<MessageProvider>(context);
+    Message lastMessage;
+    if (isActiveProfile) {
+      lastMessage = messageProvider.messagesList.first;
+    }
     return ListTile(
       onTap: () {
         final chatPageRoute = MaterialPageRoute(
@@ -41,6 +47,17 @@ class ProfileTile extends StatelessWidget {
       ),
       title:
           ProfileName(profile, style: TextStyle(fontWeight: FontWeight.bold)),
+      subtitle: isActiveProfile
+          ? Text(lastMessage.content,
+              softWrap: false, overflow: TextOverflow.ellipsis)
+          : null,
+      trailing: isActiveProfile
+          ? Text(
+              messageDateFormatter(
+                lastMessage.createdDate,
+              ),
+              style: TextStyle(fontSize: 13, color: Colors.grey))
+          : null,
     );
   }
 }
