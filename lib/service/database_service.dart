@@ -86,6 +86,9 @@ class DatabaseService {
       await _getProfileDocument().setData({
         Profile.ACTIVE_CHAT_PROFILE_IDS: FieldValue.arrayUnion([profileId])
       }, merge: true);
+      await _getProfileCollection().document(profileId).setData({
+        Profile.ACTIVE_CHAT_PROFILE_IDS: FieldValue.arrayUnion([userId])
+      }, merge: true);
     } catch (error) {
       throw Failure.public("Adding active chat profile id failed");
     }
