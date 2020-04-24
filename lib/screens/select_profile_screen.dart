@@ -1,4 +1,4 @@
-import 'package:chatly/providers/all_profile_provider.dart';
+import 'package:chatly/providers/profile_provider.dart';
 import 'package:chatly/views/profile_title_list.dart';
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
@@ -7,9 +7,9 @@ class SelectProfileScreen extends StatelessWidget {
   static const String routeName = "/select-profile-screen";
   @override
   Widget build(BuildContext context) {
-    final AllProfileProvider allProfileProvider =
-        Provider.of<AllProfileProvider>(context);
-    final allProfile = allProfileProvider.allProfiles;
+    final ProfileProvider profileProvider =
+        Provider.of<ProfileProvider>(context);
+    final allProfile = profileProvider.allProfiles;
     return Scaffold(
       appBar: AppBar(
         title: Column(
@@ -21,7 +21,7 @@ class SelectProfileScreen extends StatelessWidget {
           ],
         ),
       ),
-      body: allProfileProvider.isInitialized
+      body: profileProvider.isInitialized
           ? Center(
               child: ProfileTileList(),
             )

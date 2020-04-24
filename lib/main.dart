@@ -1,4 +1,3 @@
-import 'package:chatly/providers/all_profile_provider.dart';
 import 'package:chatly/providers/auth_user_providers.dart';
 import 'package:chatly/providers/profile_provider.dart';
 import 'package:chatly/screens/auth_screen.dart';
@@ -37,11 +36,6 @@ class MyApp extends StatelessWidget {
               create: (_) => ProfileProvider(null),
               update: (_, databaseService, __) =>
                   ProfileProvider(databaseService)),
-          ChangeNotifierProxyProvider<DatabaseService, AllProfileProvider>(
-              lazy: false,
-              create: (_) => AllProfileProvider(null),
-              update: (_, databaseService, __) =>
-                  AllProfileProvider(databaseService)),
         ],
         child: Consumer<AuthUserProvider>(
           builder: (ctx, authUserProvider, c) {

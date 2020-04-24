@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:chatly/helpers/failure.dart';
 import 'package:chatly/helpers/view_response.dart';
 import 'package:chatly/models/profile.dart';
+import 'package:chatly/providers/message_provider.dart';
 import 'package:chatly/providers/view_state_provider.dart';
 import 'package:chatly/service/database_service.dart';
 import 'package:chatly/service/stroage_service.dart';
@@ -16,11 +17,33 @@ class ProfileProvider extends ViewStateProvider {
   bool get isProfileAvailable => profile != null;
   bool get isProfileCompleted =>
       isProfileAvailable && profile.name != null && profile.avatarUrl != null;
+  List<Profile> _allProfiles = [];
+  List<Profile> get allProfiles => _allProfiles;
+  Map<String, MessageProvider> _messageProviderList = {};
+  MessageProvider getMessageProvider(String profileId) =>
+      _messageProviderList[profileId];
 
   ProfileProvider(DatabaseService databaseService)
       : _databaseService = databaseService {
     if (databaseService == null) return;
     _tryFetchingProfile();
+  }
+  Future<void> _fetchAllProfile() async {
+    try {
+      _allProfiles = await _databaseService.getAllProfile();
+      if (_allProfiles.isNotEmpty) {
+        _allProfiles.forEach((otherProfile) {
+          _messageProviderList[otherProfile.pid] = MessageProvider(
+              senderProfile: profile, receiverProfile: otherProfile)
+            ..fetchExistingMessage(
+                byPass:
+                    profile.activeChatProfileIds.indexOf(otherProfile.pid) ==
+                        -1);
+        });
+      }
+    } on Failure catch (failure) {
+      throw failure;
+    }
   }
 
   Future<void> _tryFetchingProfile() async {
@@ -30,6 +53,7 @@ class ProfileProvider extends ViewStateProvider {
     try {
       startInitialLoader();
       _profile = await _databaseService.getUserProfile();
+      await _fetchAllProfile();
       stopExecuting();
     } on Failure catch (failure) {
       print(failure);
@@ -58,9 +82,9 @@ class ProfileProvider extends ViewStateProvider {
     }
   }
 
-  List<Profile> getActiveProfiles(List<Profile> allProfile) {
-    if (profile.activeChatProfileIds.isEmpty) return [];
-    return allProfile.where((otherProfile) {
+  List<Profile> getActiveProfiles() {
+    if (profile.activeChatProfileIds.isEmpty || _allProfiles.isEmpty) return [];
+    return _allProfiles.where((otherProfile) {
       return profile.activeChatProfileIds.indexOf(otherProfile.pid) != -1;
     }).toList();
   }

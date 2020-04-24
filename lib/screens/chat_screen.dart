@@ -1,5 +1,4 @@
 import 'package:chatly/models/profile.dart';
-import 'package:chatly/providers/all_profile_provider.dart';
 import 'package:chatly/providers/message_provider.dart';
 import 'package:chatly/providers/profile_provider.dart';
 import 'package:chatly/views/message_list_view.dart';
@@ -39,8 +38,7 @@ class _ChatScreenState extends State<ChatScreen> {
             if (messageProvider.messagesList.isEmpty) {
               profileProvider.addActiveChatProfileId(receiverProfile.pid);
             }
-            messageProvider.sendMessage(
-                content: messageContent, senderId: profileProvider.profile.pid);
+            messageProvider.sendMessage(content: messageContent);
           },
         ),
       ),

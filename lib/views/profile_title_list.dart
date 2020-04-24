@@ -1,5 +1,4 @@
 import 'package:chatly/models/profile.dart';
-import 'package:chatly/providers/all_profile_provider.dart';
 import 'package:chatly/providers/profile_provider.dart';
 import 'package:chatly/views/profile_tile.dart';
 import "package:flutter/material.dart";
@@ -10,13 +9,11 @@ class ProfileTileList extends StatelessWidget {
   ProfileTileList({this.isActiveProfileList = false});
   @override
   Widget build(BuildContext context) {
-    final AllProfileProvider allProfileProvider =
-        Provider.of<AllProfileProvider>(context);
     final ProfileProvider profileProvider =
         Provider.of<ProfileProvider>(context);
     final List<Profile> profileList = isActiveProfileList
-        ? profileProvider.getActiveProfiles(allProfileProvider.allProfiles)
-        : allProfileProvider.allProfiles;
+        ? profileProvider.getActiveProfiles()
+        : profileProvider.allProfiles;
     return profileList.isEmpty
         ? Center(child: Text("No Profile available"))
         : ListView.builder(
@@ -26,7 +23,7 @@ class ProfileTileList extends StatelessWidget {
                 providers: [
                   Provider.value(value: profile),
                   ChangeNotifierProvider.value(
-                      value: allProfileProvider.getMessageProvider(profile.pid))
+                      value: profileProvider.getMessageProvider(profile.pid))
                 ],
                 child: ProfileTile(
                   isActiveProfile: isActiveProfileList,
