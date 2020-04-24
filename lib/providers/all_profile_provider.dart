@@ -33,7 +33,14 @@ class AllProfileProvider extends ViewStateProvider {
         .toList();
   }
 
+  void addActiveProfile(Profile profile) {
+    startExecuting();
+    _activeProfiles.add(profile);
+    stopExecuting();
+  }
+
   Future<void> _tryFetchAllProfile() async {
+    if (_allProfiles.isNotEmpty) return;
     if (_databaseService == null ||
         !_databaseService.isUserAvailable ||
         _currentProfile == null) return;
@@ -57,13 +64,5 @@ class AllProfileProvider extends ViewStateProvider {
     } on Failure catch (failure) {
       print(failure);
     }
-  }
-
-  @override
-  void dispose() {
-    _messageProviderList.forEach((id, mp) {
-      mp.dispose();
-    });
-    super.dispose();
   }
 }
