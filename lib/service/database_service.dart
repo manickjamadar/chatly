@@ -149,4 +149,18 @@ class DatabaseService {
       throw Failure.public("Fetching all message error");
     }
   }
+
+  Stream<Message> getLatestMessage(
+          {@required senderId, @required receiverId}) =>
+      _getMessageCollection(senderId: senderId, receiverId: receiverId)
+          .orderBy(Message.CREATEDDATE, descending: true)
+          .limit(1)
+          .snapshots()
+          .map<Message>((querySnapshot) {
+        final List<DocumentSnapshot> docSnapshots = querySnapshot.documents;
+        if (docSnapshots.isEmpty) return null;
+        final firstDoc = docSnapshots.first;
+        if (!firstDoc.exists) return null;
+        return Message.fromMap(firstDoc.data);
+      });
 }
