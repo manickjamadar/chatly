@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:chatly/helpers/failure.dart';
 import 'package:chatly/helpers/view_response.dart';
 import 'package:chatly/models/message.dart';
@@ -12,6 +14,15 @@ class MessageProvider extends ViewStateProvider {
   List<Message> get messagesList => _messagesList;
   final Profile senderProfile;
   final Profile receiverProfile;
+  StreamSubscription<Message> latestMessageStreamSubscription;
+
+  void cancelMessageSubscription() {
+    if (latestMessageStreamSubscription != null) {
+      latestMessageStreamSubscription.cancel();
+      latestMessageStreamSubscription = null;
+    }
+  }
+
   bool get isExecutable =>
       _databaseService != null &&
       senderProfile != null &&
@@ -20,7 +31,19 @@ class MessageProvider extends ViewStateProvider {
       {@required DatabaseService databaseService,
       @required this.senderProfile,
       @required this.receiverProfile})
-      : _databaseService = databaseService;
+      : _databaseService = databaseService {
+    if (!isExecutable) return;
+    latestMessageStreamSubscription = _databaseService
+        .getLatestMessage(
+            senderId: senderProfile.pid, receiverId: receiverProfile.pid)
+        .listen((message) {
+      if (message == null) return;
+      if (message.senderId != senderProfile.pid) {
+        _messagesList.insert(0, message);
+        stopExecuting();
+      }
+    });
+  }
 
   Future<void> fetchExistingMessage({bool byPass = false}) async {
     if (!isExecutable) {
@@ -61,5 +84,11 @@ class MessageProvider extends ViewStateProvider {
       stopExecuting();
       return FailureViewResponse(failure);
     }
+  }
+
+  @override
+  void dispose() {
+    cancelMessageSubscription();
+    super.dispose();
   }
 }
