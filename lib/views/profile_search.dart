@@ -37,6 +37,13 @@ final List<String> names = [
 
 class ProfileSearch extends SearchDelegate<String> {
   @override
+  ThemeData appBarTheme(BuildContext context) {
+    return ThemeData(
+        primarySwatch: Colors.blue,
+        textTheme: TextTheme(title: TextStyle(color: Colors.white)));
+  }
+
+  @override
   List<Widget> buildActions(BuildContext context) {
     return [
       IconButton(
