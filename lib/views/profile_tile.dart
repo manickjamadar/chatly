@@ -32,6 +32,7 @@ class ProfileTile extends StatelessWidget {
         shouldShowMetaData && (lastMessage.senderId == profile.pid);
     return ListTile(
       onTap: () {
+        messageProvider.activate();
         final chatPageRoute = MaterialPageRoute(
             builder: (ctx) => MultiProvider(
                   providers: [
