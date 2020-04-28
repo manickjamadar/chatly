@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:ansicolor/ansicolor.dart';
 import 'package:chatly/helpers/failure.dart';
 import 'package:chatly/helpers/view_response.dart';
 import 'package:chatly/models/message.dart';
@@ -15,6 +16,15 @@ class MessageProvider extends ViewStateProvider {
   final Profile senderProfile;
   final Profile receiverProfile;
   StreamSubscription<Message> latestMessageStreamSubscription;
+  bool _isActive = false;
+
+  activate() {
+    _isActive = true;
+  }
+
+  deactivate() {
+    _isActive = false;
+  }
 
   void cancelMessageSubscription() {
     if (latestMessageStreamSubscription != null) {
