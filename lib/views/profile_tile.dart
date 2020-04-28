@@ -1,3 +1,4 @@
+import 'package:chatly/helpers/count_unseen_message.dart';
 import 'package:chatly/helpers/message_date_formatter.dart';
 import 'package:chatly/models/message.dart';
 import 'package:chatly/models/profile.dart';
@@ -18,9 +19,13 @@ class ProfileTile extends StatelessWidget {
     final Profile profile = Provider.of<Profile>(context);
     final MessageProvider messageProvider =
         Provider.of<MessageProvider>(context);
+    List<Message> messagesList = messageProvider.messagesList;
     Message lastMessage;
-    if (isActiveProfile && messageProvider.messagesList.isNotEmpty) {
-      lastMessage = messageProvider.messagesList.first;
+    UnseenMessageCount unseenMessageCount;
+    if (isActiveProfile && messagesList.isNotEmpty) {
+      lastMessage = messagesList.first;
+      unseenMessageCount = UnseenMessageCount.fromMessageList(
+          messageList: messagesList, receiverProfile: profile);
     }
     bool shouldShowMetaData = isActiveProfile && lastMessage != null;
     bool isLastMessageIsIncomingMessage =
@@ -68,11 +73,34 @@ class ProfileTile extends StatelessWidget {
             )
           : null,
       trailing: shouldShowMetaData
-          ? Text(
-              messageDateFormatter(
-                lastMessage.createdDate,
-              ),
-              style: TextStyle(fontSize: 13, color: Colors.grey))
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                    messageDateFormatter(
+                      lastMessage.createdDate,
+                    ),
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: unseenMessageCount != null &&
+                                unseenMessageCount.isNotEmpty
+                            ? Colors.green
+                            : Colors.grey)),
+                SizedBox(
+                  height: 4,
+                ),
+                if (unseenMessageCount != null && unseenMessageCount.isNotEmpty)
+                  CircleAvatar(
+                    backgroundColor: Colors.green,
+                    radius: 10,
+                    child: Text(
+                      unseenMessageCount.toString(),
+                      style: TextStyle(fontSize: 10, color: Colors.white),
+                    ),
+                  )
+              ],
+            )
           : null,
     );
   }
