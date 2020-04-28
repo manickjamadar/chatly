@@ -3,6 +3,7 @@ import 'package:chatly/models/message.dart';
 import 'package:chatly/models/profile.dart';
 import 'package:chatly/providers/message_provider.dart';
 import 'package:chatly/screens/chat_screen.dart';
+import 'package:chatly/widgets/message_status_icon.dart';
 import 'package:chatly/widgets/profile_avatart.dart';
 import 'package:chatly/widgets/profile_name.dart';
 import 'package:chatly/widgets/profile_viewer.dart';
@@ -49,8 +50,20 @@ class ProfileTile extends StatelessWidget {
       title:
           ProfileName(profile, style: TextStyle(fontWeight: FontWeight.bold)),
       subtitle: shouldShowMetaData
-          ? Text(lastMessage.content,
-              softWrap: false, overflow: TextOverflow.ellipsis)
+          ? Row(
+              children: <Widget>[
+                if (lastMessage.senderId == profile.pid) ...[
+                  MessageStatusIcon(lastMessage.messageStatus, size: 18),
+                  SizedBox(
+                    width: 6,
+                  ),
+                ],
+                Flexible(
+                  child: Text(lastMessage.content,
+                      softWrap: false, overflow: TextOverflow.ellipsis),
+                )
+              ],
+            )
           : null,
       trailing: shouldShowMetaData
           ? Text(
