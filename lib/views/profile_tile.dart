@@ -23,6 +23,8 @@ class ProfileTile extends StatelessWidget {
       lastMessage = messageProvider.messagesList.first;
     }
     bool shouldShowMetaData = isActiveProfile && lastMessage != null;
+    bool isLastMessageIsIncomingMessage =
+        shouldShowMetaData && (lastMessage.senderId == profile.pid);
     return ListTile(
       onTap: () {
         final chatPageRoute = MaterialPageRoute(
@@ -52,7 +54,7 @@ class ProfileTile extends StatelessWidget {
       subtitle: shouldShowMetaData
           ? Row(
               children: <Widget>[
-                if (lastMessage.senderId == profile.pid) ...[
+                if (!isLastMessageIsIncomingMessage) ...[
                   MessageStatusIcon(lastMessage.messageStatus, size: 18),
                   SizedBox(
                     width: 6,
