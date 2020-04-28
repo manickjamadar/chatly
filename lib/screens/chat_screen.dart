@@ -1,3 +1,4 @@
+import 'package:ansicolor/ansicolor.dart';
 import 'package:chatly/models/profile.dart';
 import 'package:chatly/providers/message_provider.dart';
 import 'package:chatly/providers/profile_provider.dart';
@@ -14,7 +15,7 @@ class ChatScreen extends StatefulWidget {
   _ChatScreenState createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   TextEditingController _messageContentController;
   Widget sendButton(BuildContext context) {
     final MessageProvider messageProvider =
@@ -71,16 +72,36 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  void _backPressed() {
+    final MessageProvider messageProvider =
+        Provider.of<MessageProvider>(context, listen: false);
+    messageProvider.deactivate();
+  }
+
   @override
   void initState() {
     _messageContentController = TextEditingController();
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
 
   @override
   void dispose() {
     _messageContentController = TextEditingController();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final MessageProvider messageProvider =
+        Provider.of<MessageProvider>(context, listen: false);
+    if (state == AppLifecycleState.resumed) {
+      messageProvider.activate();
+    } else {
+      messageProvider.deactivate();
+    }
+    super.didChangeAppLifecycleState(state);
   }
 
   @override
@@ -88,50 +109,57 @@ class _ChatScreenState extends State<ChatScreen> {
     final ProfileProvider profileProvider =
         Provider.of<ProfileProvider>(context);
     final Profile receiverProfile = Provider.of<Profile>(context);
-    return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          leading: InkWell(
-            onTap: () {
-              if (ModalRoute.of(context).canPop) {
-                Navigator.pop(context);
-              }
-            },
-            child: Row(
-              children: <Widget>[
-                SizedBox(
-                  width: 4,
-                ),
-                Icon(
-                  Icons.arrow_back,
-                  size: 20,
-                ),
-                SizedBox(
-                  width: 2,
-                ),
-                ProfileAvatar(
-                  receiverProfile,
-                  radius: 30,
-                )
-              ],
-            ),
-          ),
-          title: ProfileName(receiverProfile),
-          actions: <Widget>[
-            IconButton(icon: Icon(Icons.videocam), onPressed: () {}),
-            IconButton(icon: Icon(Icons.call), onPressed: () {}),
-            IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
-          ],
-        ),
-        body: profileProvider.isInitialized
-            ? Column(
+    return WillPopScope(
+      onWillPop: () {
+        _backPressed();
+        return Future(() => true);
+      },
+      child: Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            leading: InkWell(
+              onTap: () {
+                if (ModalRoute.of(context).canPop) {
+                  _backPressed();
+                  Navigator.pop(context);
+                }
+              },
+              child: Row(
                 children: <Widget>[
-                  Expanded(child: MessageListView()),
-                  messageSender(context)
+                  SizedBox(
+                    width: 4,
+                  ),
+                  Icon(
+                    Icons.arrow_back,
+                    size: 20,
+                  ),
+                  SizedBox(
+                    width: 2,
+                  ),
+                  ProfileAvatar(
+                    receiverProfile,
+                    radius: 30,
+                  )
                 ],
-              )
-            : Center(
-                child: CircularProgressIndicator(),
-              ));
+              ),
+            ),
+            title: ProfileName(receiverProfile),
+            actions: <Widget>[
+              IconButton(icon: Icon(Icons.videocam), onPressed: () {}),
+              IconButton(icon: Icon(Icons.call), onPressed: () {}),
+              IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
+            ],
+          ),
+          body: profileProvider.isInitialized
+              ? Column(
+                  children: <Widget>[
+                    Expanded(child: MessageListView()),
+                    messageSender(context)
+                  ],
+                )
+              : Center(
+                  child: CircularProgressIndicator(),
+                )),
+    );
   }
 }
