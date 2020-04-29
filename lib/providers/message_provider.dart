@@ -88,6 +88,7 @@ class MessageProvider extends ViewStateProvider {
           seenableMessage.messageStatus == MessageStatus.seen) continue;
       seenableMessage.updateStatus(MessageStatus.seen);
       _messagesService.changeMessageStatus(message: seenableMessage);
+      stopExecuting();
     }
   }
 
