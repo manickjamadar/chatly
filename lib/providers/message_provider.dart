@@ -46,13 +46,16 @@ class MessageProvider extends ViewStateProvider {
     latestMessageStreamSubscription = _databaseService
         .getLatestMessage(
             senderId: senderProfile.pid, receiverId: receiverProfile.pid)
-        .listen((latestMessage) {
-      if (latestMessage == null) return;
-      if (latestMessage.senderId != senderProfile.pid) {
-        _messagesList.insert(0, latestMessage);
-        stopExecuting();
-      }
-    });
+        .listen(handleLatestMessage);
+  }
+
+  void handleLatestMessage(Message latestMessage) {
+    if (latestMessage == null) return;
+    bool isIncomingMessage = latestMessage.senderId == receiverProfile.pid;
+    if (isIncomingMessage) {
+      _messagesList.insert(0, latestMessage);
+      stopExecuting();
+    }
   }
 
   Future<void> fetchExistingMessage({bool byPass = false}) async {
