@@ -5,29 +5,17 @@ import 'package:flutter/foundation.dart';
 
 class MessagesService {
   Firestore _firestore = Firestore.instance;
-  CollectionReference _getMessageCollection(
-      {@required String senderId, @required String receiverId}) {
-    String messageCollectionName;
-    final int idComparedResult = senderId.compareTo(receiverId);
-    if (idComparedResult == 0 || idComparedResult == 1) {
-      messageCollectionName = senderId + receiverId;
-    } else {
-      messageCollectionName = receiverId + senderId;
-    }
+  final String messageCollectionName = "messages";
+  CollectionReference _getMessageCollection() {
     return _firestore.collection(messageCollectionName);
   }
 
   DocumentReference _getMessageDocument(Message message) {
-    return _getMessageCollection(
-            senderId: message.senderId, receiverId: message.receiverId)
-        .document(message.mid);
+    return _getMessageCollection().document(message.mid);
   }
 
-  String getNewMessageId(
-      {@required String senderId, @required String receiverId}) {
-    return _getMessageCollection(senderId: senderId, receiverId: receiverId)
-        .document()
-        .documentID;
+  String getNewMessageId() {
+    return _getMessageCollection().document().documentID;
   }
 
   Future<void> sendMessageToServer(Message message) async {
@@ -41,9 +29,11 @@ class MessagesService {
   Future<List<Message>> fetchAllMessage(
       {@required senderId, @required receiverId}) async {
     try {
-      final QuerySnapshot querySnapshot = await _getMessageCollection(
-              senderId: senderId, receiverId: receiverId)
+      final QuerySnapshot querySnapshot = await _getMessageCollection()
           .orderBy(Message.CREATEDDATE, descending: true)
+          .where(Message.QUERY_ID,
+              isEqualTo: Message.generateQueryId(
+                  senderId: senderId, receiverId: receiverId))
           .getDocuments();
       final List<Message> result = [];
       querySnapshot.documents.forEach((docSnapshot) {
@@ -59,8 +49,13 @@ class MessagesService {
 
   Stream<Message> getLatestMessage(
           {@required senderId, @required receiverId}) =>
-      _getMessageCollection(senderId: senderId, receiverId: receiverId)
+      _getMessageCollection()
           .orderBy(Message.CREATEDDATE, descending: true)
+          .where(Message.QUERY_ID,
+              isEqualTo: Message.generateQueryId(
+                  senderId: senderId, receiverId: receiverId))
+          .where(Message.SENDERID, isEqualTo: receiverId)
+          .where(Message.MESSAGESTATUS, isEqualTo: MessageStatus.sent.index)
           .limit(1)
           .snapshots()
           .map<Message>((querySnapshot) {
