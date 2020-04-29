@@ -6,10 +6,13 @@ import 'package:chatly/screens/main_screen.dart';
 import 'package:chatly/screens/select_profile_screen.dart';
 import 'package:chatly/service/auth_service.dart';
 import 'package:chatly/service/database_service.dart';
+import 'package:chatly/service_locator.dart';
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  setupLocator();
   runApp(MyApp());
 }
 
