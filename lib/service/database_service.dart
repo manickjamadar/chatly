@@ -102,4 +102,13 @@ class DatabaseService {
         if (!docSnapshot.exists) return null;
         return Profile.fromMap(docSnapshot.data);
       });
+  Stream<Profile> getOtherProfileStream(String profileId) =>
+      _getProfileCollection()
+          .document(profileId)
+          .snapshots()
+          .map((docSnapshot) {
+        if (!docSnapshot.exists) return null;
+        if (docSnapshot.data == null) return null;
+        return Profile.fromMap(docSnapshot.data);
+      });
 }
