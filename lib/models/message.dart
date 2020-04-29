@@ -64,7 +64,7 @@ class Message {
         MESSAGESTATUS: _messageStatus.index,
         STATUSUPDATEDDATE: _statusUpdatedDate
       });
-  void updateStatus(MessageStatus status, DateTime updatedDate) {
+  void updateStatus(MessageStatus status, {DateTime updatedDate}) {
     _messageStatus = status;
     _statusUpdatedDate = updatedDate ?? DateTime.now();
   }
