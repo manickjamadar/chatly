@@ -17,6 +17,55 @@ class MessageProvider extends ViewStateProvider {
   StreamSubscription<Message> latestMessageStreamSubscription;
   bool _isActive = false;
   List<Message> _seenableMessages = [];
+  Map<String, StreamSubscription<Message>> _outgoingMessagesSubscriptions = {};
+
+  void cancelAllOutgoingMessagesSubscription() {
+    _outgoingMessagesSubscriptions.forEach((id, sub) {
+      sub?.cancel();
+    });
+    _outgoingMessagesSubscriptions.clear();
+  }
+
+  Message findOutgoingMessage(String mid) {
+    for (int i = 0; i < _messagesList.length; i++) {
+      final message = _messagesList[i];
+      if (isIncomingMessage(message)) return null;
+      if (message.mid == mid) return message;
+    }
+    return null;
+  }
+
+  void removeOutgoingMessageSubscription(Message message) {
+    if (_outgoingMessagesSubscriptions.isEmpty) return;
+    final StreamSubscription<Message> removedMessageSubscription =
+        _outgoingMessagesSubscriptions.remove(message.mid);
+    removedMessageSubscription?.cancel();
+  }
+
+  handleOutgoingMessageStatus(Message outgoingMessage) {
+    if (outgoingMessage == null) {
+      removeOutgoingMessageSubscription(outgoingMessage);
+    }
+    //update the status of message
+    final Message getMatchedMessage = findOutgoingMessage(outgoingMessage.mid);
+    if (getMatchedMessage == null) {
+      removeOutgoingMessageSubscription(outgoingMessage);
+    }
+    getMatchedMessage.updateStatus(outgoingMessage.messageStatus);
+    stopExecuting();
+    if (outgoingMessage.messageStatus == MessageStatus.seen) {
+      removeOutgoingMessageSubscription(outgoingMessage);
+    }
+  }
+
+  void addOutgoingMessageSubscription(Message message) {
+    if (isIncomingMessage(message) ||
+        message.messageStatus == MessageStatus.seen) return;
+    final Stream<Message> outgoingMessageStream =
+        _messagesService.getMessageStream(message);
+    _outgoingMessagesSubscriptions[message.mid] =
+        outgoingMessageStream.listen(handleOutgoingMessageStatus);
+  }
 
   void seenAllSeenableMessages() {
     for (int i = 0; i < _seenableMessages.length; i++) {
@@ -122,6 +171,7 @@ class MessageProvider extends ViewStateProvider {
     );
     try {
       _messagesList.insert(0, message);
+      addOutgoingMessageSubscription(message);
       startExecuting();
       await _messagesService.sendMessageToServer(message);
       stopExecuting();
@@ -136,6 +186,7 @@ class MessageProvider extends ViewStateProvider {
   @override
   void dispose() {
     cancelMessageSubscription();
+    cancelAllOutgoingMessagesSubscription();
     super.dispose();
   }
 }
