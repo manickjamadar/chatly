@@ -32,8 +32,8 @@ class ProfileViewer extends StatelessWidget {
                       topRight: Radius.circular(10)),
                   child: Hero(
                       tag: profile.avatarUrl,
-                      child: Image.network(profile.avatarUrl,
-                          fit: BoxFit.fitWidth))),
+                      child:
+                          Image.network(profile.avatarUrl, fit: BoxFit.cover))),
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
