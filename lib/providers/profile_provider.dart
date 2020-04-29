@@ -24,6 +24,15 @@ class ProfileProvider extends ViewStateProvider {
   MessageProvider getMessageProvider(String profileId) =>
       _messageProviderList[profileId];
   StreamSubscription<Profile> latestProfileSubscription;
+  List<StreamSubscription<Profile>> _allProfilesSubscription = [];
+  void cancelAllProfilesSubscription() {
+    if (_allProfilesSubscription.isEmpty) return;
+    _allProfilesSubscription.forEach((profileSub) {
+      profileSub?.cancel();
+    });
+    _allProfilesSubscription.clear();
+  }
+
   void cancelLatestProfileSubscription() {
     if (latestProfileSubscription != null) {
       latestProfileSubscription.cancel();
@@ -45,11 +54,28 @@ class ProfileProvider extends ViewStateProvider {
       }
     });
   }
+
+  void handleOtherProfileChanges(newOtherProfile) {
+    if (newOtherProfile == null) return;
+    for (int i = 0; i < _allProfiles.length; i++) {
+      final oldProfile = _allProfiles[i];
+      if (oldProfile.pid == newOtherProfile.pid) {
+        _allProfiles[i] = newOtherProfile;
+        notifyListeners();
+        return;
+      }
+    }
+  }
+
   Future<void> _fetchAllProfile() async {
     try {
       _allProfiles = await _databaseService.getAllProfile();
       if (_allProfiles.isNotEmpty) {
         _allProfiles.forEach((otherProfile) {
+          final otherProfileStream =
+              _databaseService.getOtherProfileStream(otherProfile.pid);
+          _allProfilesSubscription
+              .add(otherProfileStream.listen(handleOtherProfileChanges));
           _messageProviderList[otherProfile.pid] = MessageProvider(
               senderProfile: profile, receiverProfile: otherProfile)
             ..fetchExistingMessage(
@@ -123,6 +149,7 @@ class ProfileProvider extends ViewStateProvider {
   @override
   void dispose() {
     cancelLatestProfileSubscription();
+    cancelAllProfilesSubscription();
     _messageProviderList.forEach((id, messageProvider) {
       messageProvider.dispose();
     });
