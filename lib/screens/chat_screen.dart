@@ -1,4 +1,3 @@
-import 'package:ansicolor/ansicolor.dart';
 import 'package:chatly/models/profile.dart';
 import 'package:chatly/providers/message_provider.dart';
 import 'package:chatly/providers/profile_provider.dart';
