@@ -65,4 +65,16 @@ class MessagesService {
         if (!firstDoc.exists) return null;
         return Message.fromMap(firstDoc.data);
       });
+
+  Future<void> changeMessageStatus({@required Message message}) async {
+    try {
+      final messageMap = message.toMap();
+      await _getMessageDocument(message).setData({
+        Message.MESSAGESTATUS: messageMap[Message.MESSAGESTATUS],
+        Message.STATUSUPDATEDDATE: messageMap[Message.STATUSUPDATEDDATE]
+      }, merge: true);
+    } catch (error) {
+      throw Failure.public("Changing message status failed");
+    }
+  }
 }
