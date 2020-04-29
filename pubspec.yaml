@@ -33,7 +33,6 @@ dependencies:
   provider: ^4.0.5
   image_picker: ^0.6.5+2
   image_cropper: ^1.2.1
-  contacts_service: ^0.4.3
   get_it: ^4.0.2
 
 dev_dependencies:
