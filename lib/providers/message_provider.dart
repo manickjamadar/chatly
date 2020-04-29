@@ -1,16 +1,15 @@
 import 'dart:async';
-
-import 'package:ansicolor/ansicolor.dart';
 import 'package:chatly/helpers/failure.dart';
 import 'package:chatly/helpers/view_response.dart';
 import 'package:chatly/models/message.dart';
 import 'package:chatly/models/profile.dart';
 import 'package:chatly/providers/view_state_provider.dart';
-import 'package:chatly/service/database_service.dart';
+import 'package:chatly/service/messages_service.dart';
+import 'package:chatly/service_locator.dart';
 import 'package:flutter/foundation.dart';
 
 class MessageProvider extends ViewStateProvider {
-  DatabaseService _databaseService;
+  MessagesService _messagesService = locator<MessagesService>();
   List<Message> _messagesList = [];
   List<Message> get messagesList => _messagesList;
   final Profile senderProfile;
@@ -34,16 +33,13 @@ class MessageProvider extends ViewStateProvider {
   }
 
   bool get isExecutable =>
-      _databaseService != null &&
+      _messagesService != null &&
       senderProfile != null &&
       receiverProfile != null;
   MessageProvider(
-      {@required DatabaseService databaseService,
-      @required this.senderProfile,
-      @required this.receiverProfile})
-      : _databaseService = databaseService {
+      {@required this.senderProfile, @required this.receiverProfile}) {
     if (!isExecutable) return;
-    latestMessageStreamSubscription = _databaseService
+    latestMessageStreamSubscription = _messagesService
         .getLatestMessage(
             senderId: senderProfile.pid, receiverId: receiverProfile.pid)
         .listen(handleLatestMessage);
@@ -66,7 +62,7 @@ class MessageProvider extends ViewStateProvider {
     if (byPass) return stopExecuting();
     try {
       startInitialLoader();
-      _messagesList = await _databaseService.fetchAllMessage(
+      _messagesList = await _messagesService.fetchAllMessage(
           senderId: senderProfile.pid, receiverId: receiverProfile.pid);
       stopExecuting();
     } on Failure catch (failure) {
@@ -80,7 +76,7 @@ class MessageProvider extends ViewStateProvider {
     if (!isExecutable || content == null)
       return FailureViewResponse(Failure.internal("Some dependencies missing"));
     final Message message = Message(
-      mid: _databaseService.getNewMessageId(
+      mid: _messagesService.getNewMessageId(
           senderId: senderProfile.pid, receiverId: receiverProfile.pid),
       content: content,
       senderId: senderProfile.pid,
@@ -89,7 +85,7 @@ class MessageProvider extends ViewStateProvider {
     try {
       _messagesList.insert(0, message);
       startExecuting();
-      await _databaseService.sendMessageToServer(message);
+      await _messagesService.sendMessageToServer(message);
       stopExecuting();
       return ViewResponse("Sending message successful");
     } on Failure catch (failure) {
