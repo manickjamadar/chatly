@@ -16,6 +16,7 @@ class MessageProvider extends ViewStateProvider {
   final Profile receiverProfile;
   StreamSubscription<Message> latestMessageStreamSubscription;
   bool _isActive = false;
+  List<Message> _seenableMessages = [];
 
   activate() {
     _isActive = true;
@@ -32,6 +33,10 @@ class MessageProvider extends ViewStateProvider {
     }
   }
 
+  bool isIncomingMessage(Message message) {
+    return message.senderId == receiverProfile.pid;
+  }
+
   bool get isExecutable =>
       _messagesService != null &&
       senderProfile != null &&
@@ -45,11 +50,27 @@ class MessageProvider extends ViewStateProvider {
         .listen(handleLatestMessage);
   }
 
+  void handleIncomingMessageStatusChange(Message message) {
+    if (!isIncomingMessage(message) ||
+        message.messageStatus == MessageStatus.seen) return;
+    if (message.messageStatus == MessageStatus.sent) {
+      if (_isActive) {
+        message.updateStatus(MessageStatus.seen);
+      } else {
+        message.updateStatus(MessageStatus.delivered);
+      }
+      _messagesService.changeMessageStatus(message: message);
+    }
+    if (message.messageStatus == MessageStatus.delivered) {
+      _seenableMessages.add(message);
+    }
+  }
+
   void handleLatestMessage(Message latestMessage) {
     if (latestMessage == null) return;
-    bool isIncomingMessage = latestMessage.senderId == receiverProfile.pid;
-    if (isIncomingMessage) {
+    if (isIncomingMessage(latestMessage)) {
       _messagesList.insert(0, latestMessage);
+      handleIncomingMessageStatusChange(latestMessage);
       stopExecuting();
     }
   }
@@ -64,6 +85,11 @@ class MessageProvider extends ViewStateProvider {
       startInitialLoader();
       _messagesList = await _messagesService.fetchAllMessage(
           senderId: senderProfile.pid, receiverId: receiverProfile.pid);
+      for (int i = 0; i < _messagesList.length; i++) {
+        final message = _messagesList[i];
+        if (message == null) continue;
+        handleIncomingMessageStatusChange(message);
+      }
       stopExecuting();
     } on Failure catch (failure) {
       _messagesList = [];
