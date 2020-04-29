@@ -18,8 +18,21 @@ class MessageProvider extends ViewStateProvider {
   bool _isActive = false;
   List<Message> _seenableMessages = [];
 
+  void seenAllSeenableMessages() {
+    for (int i = 0; i < _seenableMessages.length; i++) {
+      final seenableMessage = _seenableMessages.removeAt(i);
+      if (seenableMessage == null ||
+          seenableMessage.messageStatus == MessageStatus.seen) continue;
+      seenableMessage.updateStatus(MessageStatus.seen);
+      _messagesService.changeMessageStatus(message: seenableMessage);
+    }
+  }
+
   activate() {
     _isActive = true;
+    if (_seenableMessages.isNotEmpty) {
+      seenAllSeenableMessages();
+    }
   }
 
   deactivate() {
