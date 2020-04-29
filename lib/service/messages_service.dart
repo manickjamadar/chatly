@@ -77,4 +77,11 @@ class MessagesService {
       throw Failure.public("Changing message status failed");
     }
   }
+
+  Stream<Message> getMessageStream(Message message) =>
+      _getMessageDocument(message).snapshots().map((docSnapshot) {
+        if (!docSnapshot.exists) return null;
+        if (docSnapshot.data == null) return null;
+        return Message.fromMap(docSnapshot.data);
+      });
 }
