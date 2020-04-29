@@ -65,6 +65,9 @@ class MessageProvider extends ViewStateProvider {
     getMatchedMessage.updateStatus(outgoingMessage.messageStatus);
     stopExecuting();
     if (outgoingMessage.messageStatus == MessageStatus.seen) {
+      findNonSeenOutgoingMessages()
+          .forEach((message) => message.updateStatus(MessageStatus.seen));
+      stopExecuting();
       removeOutgoingMessageSubscription(outgoingMessage);
     }
   }
