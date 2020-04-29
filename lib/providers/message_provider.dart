@@ -35,6 +35,17 @@ class MessageProvider extends ViewStateProvider {
     return null;
   }
 
+  List<Message> findNonSeenOutgoingMessages() {
+    final List<Message> messages = [];
+    for (int i = 0; i < _messagesList.length; i++) {
+      final message = _messagesList[i];
+      if (isIncomingMessage(message) ||
+          message.messageStatus == MessageStatus.seen) return messages;
+      messages.add(message);
+    }
+    return messages;
+  }
+
   void removeOutgoingMessageSubscription(Message message) {
     if (_outgoingMessagesSubscriptions.isEmpty) return;
     final StreamSubscription<Message> removedMessageSubscription =
@@ -152,6 +163,10 @@ class MessageProvider extends ViewStateProvider {
         if (message == null) continue;
         handleIncomingMessageStatusChange(message);
       }
+      findNonSeenOutgoingMessages().forEach((message) {
+        if (message == null) return;
+        addOutgoingMessageSubscription(message);
+      });
       stopExecuting();
     } on Failure catch (failure) {
       _messagesList = [];
