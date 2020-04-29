@@ -76,8 +76,7 @@ class MessageProvider extends ViewStateProvider {
     if (!isExecutable || content == null)
       return FailureViewResponse(Failure.internal("Some dependencies missing"));
     final Message message = Message(
-      mid: _messagesService.getNewMessageId(
-          senderId: senderProfile.pid, receiverId: receiverProfile.pid),
+      mid: _messagesService.getNewMessageId(),
       content: content,
       senderId: senderProfile.pid,
       receiverId: receiverProfile.pid,
