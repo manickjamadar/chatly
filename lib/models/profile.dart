@@ -12,9 +12,11 @@ class Profile {
   String _name;
   String _avatarUrl;
   DateTime _lastSeen;
+  String _pushToken;
 
   //getters
   String get name => _name;
+  String get pushToken => _pushToken;
   String get avatarUrl => _avatarUrl;
   DateTime get updatedDate => _updatedDate;
   DateTime get lastSeen => _lastSeen;
@@ -25,6 +27,7 @@ class Profile {
       String name,
       String avatarUrl,
       DateTime lastSeen,
+      String pushToken,
       List<String> activeChatProfileIds})
       : _name = name,
         _avatarUrl = avatarUrl,
@@ -37,6 +40,7 @@ class Profile {
         _name = profileMap['name'],
         number = profileMap['number'],
         _avatarUrl = profileMap['avatarUrl'],
+        _pushToken = profileMap['pushToken'],
         _lastSeen = timestampToDateTime(profileMap['lastSeen']),
         activeChatProfileIds = profileMap['activeChatProfileIds'] == null
             ? []
@@ -51,6 +55,7 @@ class Profile {
         "number": number,
         "avatarUrl": _avatarUrl,
         "lastSeen": _lastSeen,
+        "pushToken": _pushToken,
         "activeChatProfileIds": activeChatProfileIds ?? [],
         "createdDate": createdDate,
         "updatedDate": _updatedDate
@@ -76,10 +81,12 @@ class Profile {
       {String name,
       String avatarUrl,
       DateTime lastSeen,
+      String pushToken,
       DateTime updatedDate}) {
     _name = name ?? _name;
     _avatarUrl = avatarUrl ?? _avatarUrl;
     _lastSeen = lastSeen ?? _lastSeen;
+    _pushToken = pushToken ?? _pushToken;
     _updatedDate = updatedDate ?? DateTime.now();
   }
 }
