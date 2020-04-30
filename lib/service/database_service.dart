@@ -2,6 +2,7 @@ import 'package:chatly/helpers/failure.dart';
 import 'package:chatly/models/profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class DatabaseService {
   FirebaseUser _firebaseUser;
@@ -27,16 +28,24 @@ class DatabaseService {
           "Firebase user is not available during getting user profile");
     try {
       final DocumentSnapshot snapshot = await _getProfileDocument().get();
+      Profile profile;
       //snapshot can be null;
       if (!snapshot.exists) {
-        final Profile profile = Profile(
+        profile = Profile(
             pid: userId,
             number: _firebaseUser.phoneNumber,
             lastSeen: DateTime.now());
         await _getProfileDocument().setData(profile.toMap(), merge: true);
-        return profile;
+      } else {
+        profile = Profile.fromMap(snapshot.data);
       }
-      return Profile.fromMap(snapshot.data);
+      if (profile.pushToken == null) {
+        FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+        final String newToken = await _firebaseMessaging.getToken();
+        profile.update(pushToken: newToken);
+        await updateUserPushToken(newToken);
+      }
+      return profile;
     } catch (error) {
       throw Failure.public("User is not available");
     }
@@ -58,6 +67,29 @@ class DatabaseService {
       return profile;
     } catch (error) {
       throw Failure.public("Creating or Updating user profile failed");
+    }
+  }
+
+  Future<void> updateUserPushToken(String pushToken) async {
+    try {
+      await _getProfileDocument()
+          .setData({"pushToken": pushToken}, merge: true);
+    } catch (error) {
+      throw Failure.internal("Updating push token failed");
+    }
+  }
+
+  static Future<void> removeUserPushToken(String profileId) async {
+    try {
+      final profileDocument = Firestore.instance
+          .collection(profileCollectionName)
+          .document(profileId);
+      final docSnapshot = await profileDocument.get();
+      if (docSnapshot.exists && docSnapshot != null) {
+        await profileDocument.setData({"pushToken": null}, merge: true);
+      }
+    } catch (error) {
+      throw Failure.internal("removing user push token failed");
     }
   }
 
