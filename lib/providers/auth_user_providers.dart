@@ -2,7 +2,9 @@ import 'package:chatly/helpers/failure.dart';
 import 'package:chatly/helpers/view_response.dart';
 import 'package:chatly/providers/view_state_provider.dart';
 import 'package:chatly/service/auth_service.dart';
+import 'package:chatly/service/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 
 class AuthUserProvider extends ViewStateProvider {
@@ -103,9 +105,10 @@ class AuthUserProvider extends ViewStateProvider {
 
   Future<ViewResponse<void>> signOutUser() async {
     try {
+      await DatabaseService.removeUserPushToken(_authUser.uid);
       _reset();
-      startExecuting();
       await _authService.signOutUser();
+      FirebaseMessaging().deleteInstanceID();
       stopExecuting();
       return ViewResponse("Sign out user successful");
     } on Failure catch (failure) {
