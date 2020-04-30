@@ -39,9 +39,10 @@ class DatabaseService {
       } else {
         profile = Profile.fromMap(snapshot.data);
       }
-      if (profile.pushToken == null) {
-        FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-        final String newToken = await _firebaseMessaging.getToken();
+      FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+      final String newToken = await _firebaseMessaging.getToken();
+      if (profile.pushToken == null ||
+          profile.pushToken.compareTo(newToken) != 0) {
         profile.update(pushToken: newToken);
         await updateUserPushToken(newToken);
       }
