@@ -8,6 +8,7 @@ import 'package:chatly/providers/message_provider.dart';
 import 'package:chatly/providers/view_state_provider.dart';
 import 'package:chatly/service/database_service.dart';
 import 'package:chatly/service/stroage_service.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 
 class ProfileProvider extends ViewStateProvider {
@@ -25,6 +26,7 @@ class ProfileProvider extends ViewStateProvider {
       _messageProviderList[profileId];
   StreamSubscription<Profile> latestProfileSubscription;
   List<StreamSubscription<Profile>> _allProfilesSubscription = [];
+  StreamSubscription<String> _tokenStream;
   void cancelAllProfilesSubscription() {
     if (_allProfilesSubscription.isEmpty) return;
     _allProfilesSubscription.forEach((profileSub) {
@@ -94,6 +96,9 @@ class ProfileProvider extends ViewStateProvider {
     try {
       startInitialLoader();
       _profile = await _databaseService.getUserProfile();
+      if (_profile != null) {
+        _tokenStream = FirebaseMessaging().onTokenRefresh.listen(savePushToken);
+      }
       await _fetchAllProfile();
       stopExecuting();
     } on Failure catch (failure) {
@@ -123,6 +128,18 @@ class ProfileProvider extends ViewStateProvider {
     }
   }
 
+  Future<void> savePushToken(String pushToken) async {
+    if (_databaseService == null || !_databaseService.isUserAvailable) return;
+    try {
+      if (isProfileAvailable) {
+        _profile.update(pushToken: pushToken);
+      }
+      await _databaseService.updateUserPushToken(pushToken);
+    } on Failure catch (failure) {
+      print(failure);
+    }
+  }
+
   List<Profile> getActiveProfiles() {
     if (profile.activeChatProfileIds.isEmpty || _allProfiles.isEmpty) return [];
     return _allProfiles.where((otherProfile) {
@@ -148,6 +165,7 @@ class ProfileProvider extends ViewStateProvider {
 
   @override
   void dispose() {
+    _tokenStream?.cancel();
     cancelLatestProfileSubscription();
     cancelAllProfilesSubscription();
     _messageProviderList.forEach((id, messageProvider) {
