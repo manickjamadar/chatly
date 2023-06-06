@@ -1,3 +1,3 @@
-# chatly
+# Chatly
 
-A amazing chat application
+A amazing chat application made by Manick Jamadar
