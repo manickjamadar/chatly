@@ -23,7 +23,7 @@ To set up Chatly locally, follow these steps:
 1. Clone the repository:
 
    ```shell
-   git clone https://github.com/your-username/chatly.git
+   git clone https://github.com/manickjamadar/chatly.git
 
 2. Install get necessary dependencies using Flutter:
 
