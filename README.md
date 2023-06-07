@@ -44,6 +44,6 @@ Contributions to Chatly are more than welcome! If you encounter any bugs, issues
 Chatly is open-source and released under the [MIT License](https://chat.openai.com/LICENSE). Feel free to use, modify, and distribute this project as per the terms of the license.
 
 ## Contact
-If you have any questions or inquiries about Chatly, please feel free to contact me at [manickjamadar@gmail.com](mailto:manickjamadar@gmail.com). I'm always excited to discuss potential collaborations or new opportunities.
+If you have any questions or inquiries about Chatly, please feel free to contact me at [contact@manickjamadar.com](mailto:contact@manickjamadar.com). I'm always excited to discuss potential collaborations or new opportunities.
 
 Thank you for considering Chatly as a remarkable chat app solution. We look forward to the opportunity of working together and revolutionizing the way people connect and communicate.
